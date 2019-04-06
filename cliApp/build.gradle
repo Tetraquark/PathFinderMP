@@ -12,7 +12,16 @@ buildscript {
     }
 }
 
-mainClassName = 'ru.tetraquark.pathfindermp.MainKt'
+mainClassName = 'ru.tetraquark.pathfindermp.cli.MainKt'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+}
 
 dependencies {
     implementation project(':pathfinderlib')

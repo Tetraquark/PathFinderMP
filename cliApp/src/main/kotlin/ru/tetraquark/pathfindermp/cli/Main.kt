@@ -1,7 +1,7 @@
-package ru.tetraquark.pathfindermp
+package ru.tetraquark.pathfindermp.cli
 
 import ru.tetraquark.pathfinderlib.core.TestHello
 
-fun main() {
+fun main(args: Array<String>) {
     println(TestHello().multiplatformHello())
 }
