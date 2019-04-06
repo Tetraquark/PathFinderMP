@@ -1,7 +1,7 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
 data class Edge<WeightT>(
-    val id: String,
+    val id: Int,
     private val from: Node<*>,
     private val to: Node<*>,
     val weight: WeightT
