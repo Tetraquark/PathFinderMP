@@ -1,10 +1,10 @@
-package ru.tetraquark.pathfinderlib.core
+package ru.tetraquark.pathfinderlib.core.pathfinder
 
-import ru.tetraquark.pathfinderlib.core.map.Map
+import ru.tetraquark.pathfinderlib.core.map.GraphMap
 import ru.tetraquark.pathfinderlib.core.map.Path
 
-interface PathFinderAlgorithm {
+interface PathFinderAlgorithm<EdgeWeightT> {
 
-    fun findPath(map: Map): Path
+    fun findPath(graph: GraphMap<*, EdgeWeightT>): Path
 
 }
