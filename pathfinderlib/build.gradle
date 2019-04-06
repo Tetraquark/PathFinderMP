@@ -6,13 +6,13 @@ repositories {
 
 kotlin {
     targets {
-        fromPreset(presets.jvm, 'android')
-
         final def iOSTarget = System.getenv('SDK_NAME')?.startsWith("iphoneos") ? presets.iosArm64 : presets.iosX64
 
         fromPreset(iOSTarget, 'iOS') {
             compilations.main.outputKinds('FRAMEWORK')
         }
+
+        fromPreset(presets.jvm, 'jvm')
     }
     sourceSets {
         commonMain {
@@ -26,24 +26,24 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
             }
         }
-        androidMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-            }
-        }
-        androidTest {
-            dependencies {
-                implementation 'junit:junit:4.12'
-                implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
-            }
-        }
         iOSMain {
             dependencies {
             }
 
         }
         iOSTest {
+        }
+        jvmMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation 'junit:junit:4.12'
+                implementation 'org.jetbrains.kotlin:kotlin-test'
+                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+            }
         }
     }
 }
