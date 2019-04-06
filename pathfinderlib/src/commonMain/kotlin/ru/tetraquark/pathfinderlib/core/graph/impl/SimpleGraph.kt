@@ -3,20 +3,35 @@ package ru.tetraquark.pathfinderlib.core.graph.impl
 import ru.tetraquark.pathfinderlib.core.graph.Edge
 import ru.tetraquark.pathfinderlib.core.graph.MutableGraph
 import ru.tetraquark.pathfinderlib.core.graph.Node
+import ru.tetraquark.pathfinderlib.ext.nextString
+import kotlin.random.Random
 
 class SimpleGraph<NodeDataT, EdgeWeightT> : MutableGraph<NodeDataT, EdgeWeightT> {
-    private val edges = mutableMapOf<Int, Edge<EdgeWeightT>>()
-    private val nodes = mutableMapOf<Int, Node<NodeDataT>>()
+    private val edges = mutableMapOf<String, Edge<EdgeWeightT>>()
+    private val nodes = mutableMapOf<String, Node<NodeDataT>>()
 
     override fun nodesCount(): Int = nodes.size
 
     override fun edgesCount(): Int = edges.size
 
-    override fun addNode(node: Node<NodeDataT>) {
-        nodes[node.index] = node
+    override fun addNode(data: NodeDataT): Node<NodeDataT> {
+        val id = Random.nextString()
+        return addNode(id, data)
     }
 
-    override fun addNode(data: NodeDataT): Node<NodeDataT> {
+    override fun addNode(id: String, data: NodeDataT): Node<NodeDataT> {
+        // TODO: check id existence
+        val node = Node(id, data)
+        nodes[id] = node
+        return node
+    }
+
+    override fun addEdge(
+        id: String,
+        from: Node<NodeDataT>,
+        to: Node<NodeDataT>,
+        weight: EdgeWeightT
+    ): Edge<EdgeWeightT>? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -28,7 +43,7 @@ class SimpleGraph<NodeDataT, EdgeWeightT> : MutableGraph<NodeDataT, EdgeWeightT>
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun removeNode(index: Int) {
+    override fun removeNode(id: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -36,7 +51,7 @@ class SimpleGraph<NodeDataT, EdgeWeightT> : MutableGraph<NodeDataT, EdgeWeightT>
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun removeEdge(index: Int) {
+    override fun removeEdge(id: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

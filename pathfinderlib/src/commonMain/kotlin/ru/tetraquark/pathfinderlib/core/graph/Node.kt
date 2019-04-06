@@ -1,7 +1,7 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
 data class Node<DataT>(
-    val index: Int,
+    val id: String,
     val data: DataT
 ) {
 
