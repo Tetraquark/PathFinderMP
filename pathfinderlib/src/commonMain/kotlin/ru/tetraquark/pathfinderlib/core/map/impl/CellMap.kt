@@ -13,53 +13,68 @@ class CellMap(
     companion object {
         private const val DEFAULT_EDGES_WEIGHT = 1
     }
-    var adapter: MapAdapter? = null
-        set(value) {
-            field = value
-            reloadMap()
-        }
+
+    override fun setStartCell(x: Int, y: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun setFinishCell(x: Int, y: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private var cellList: MutableList<MapCell> = mutableListOf()
 
-    private fun reloadMap() {
-        adapter?.let { _adapter ->
-            graph.clear()
+    fun reloadMap(adapter: MapAdapter) {
+        graph.clear()
 
-            // TODO: need to add checks width and height (exmp. to a negative value)
-            width = _adapter.getWidth()
-            height = _adapter.getHeight()
+        // TODO: need to add checks width and height (exmp. to a negative value)
+        width = adapter.getWidth()
+        height = adapter.getHeight()
 
-            cellList = mutableListOf()
+        cellList = mutableListOf()
 
-            for(j in (0..height)) {
-                for(i in (0..width)) {
-                    val cell = MapCell(i, j, _adapter.getCellType(i, j))
-                    val nodeId = fromCoordsToKey(i, j, width)
+        for(j in (0..height)) {
+            for(i in (0..width)) {
+                val cell = MapCell(i, j, adapter.getCellType(i, j))
+                val nodeId = fromCoordsToKey(i, j, width)
 
-                    if(cell.cellType == CellType.OPEN) {
-                        // creates nodes and edges with with adjacent nodes
-                        val node = graph.putNode(nodeId, cell)
-                        if(node != null) {
-                            if(i > 0) {
-                                tyrToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
-                            }
-                            if(i < width - 1) {
-                                tyrToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
-                            }
-                            if(j > 0) {
-                                tyrToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, height))
-                            }
-                            if(j < height - 1) {
-                                tyrToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, height))
-                            }
+                if(cell.cellType == CellType.OPEN) {
+                    // creates nodes and edges with with adjacent nodes
+                    val node = graph.putNode(nodeId, cell)
+                    if(node != null) {
+                        if(i > 0) {
+                            tyrToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
+                        }
+                        if(i < width - 1) {
+                            tyrToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
+                        }
+                        if(j > 0) {
+                            tyrToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, height))
+                        }
+                        if(j < height - 1) {
+                            tyrToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, height))
                         }
                     }
-
-                    //cellList[nodeId] = cell
-                    cellList.add(cell)
                 }
+
+                //cellList[nodeId] = cell
+                cellList.add(cell)
             }
         }
+    }
+
+    /**
+     * List of map cells [cells]
+     */
+    fun reloadMap(width: Int, height: Int, cells: List<CellType>) {
+        reloadMap(object : MapAdapter() {
+            override fun getWidth(): Int = width
+
+            override fun getHeight(): Int = height
+
+            override fun getCellType(x: Int, y: Int): CellType =
+                cells[fromCoordsToKey(x, y, width)]
+        })
     }
 
     override fun iterator(): Iterator<MapCell> = cellList.iterator()
