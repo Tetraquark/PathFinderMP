@@ -1,13 +1,32 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
-interface MutableGraph<NodeDataT, EdgeWeightT> : Graph<NodeDataT, EdgeWeightT> {
+interface MutableGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> :
+    Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> {
 
-    fun addNode(data: NodeDataT): Node<NodeDataT>?
-    fun addEdge(from: Node<NodeDataT>, to: Node<NodeDataT>, weight: EdgeWeightT): Edge<EdgeWeightT>?
-    fun removeNode(node: Node<NodeDataT>)
-    fun removeNode(id: Int)
-    fun removeEdge(edge: Edge<EdgeWeightT>)
-    fun removeEdge(id: Int)
+    fun addNode(data: NodeDataT): Node<NodeIdT, NodeDataT>?
+
+    fun putNode(id: NodeIdT, data: NodeDataT): Node<NodeIdT, NodeDataT>?
+
+    fun addEdge(
+        from: Node<NodeIdT, NodeDataT>,
+        to: Node<NodeIdT, NodeDataT>,
+        weight: EdgeWeightT
+    ): Edge<EdgeIdT, EdgeWeightT>?
+
+    fun putEdge(
+        id: EdgeIdT,
+        from: Node<NodeIdT, NodeDataT>,
+        to: Node<NodeIdT, NodeDataT>,
+        weight: EdgeWeightT
+    ): Edge<EdgeIdT, EdgeWeightT>?
+
+    fun removeNode(node: Node<NodeIdT, NodeDataT>)
+
+    fun removeNode(id: NodeIdT)
+
+    fun removeEdge(edge: Edge<EdgeIdT, EdgeWeightT>)
+
+    fun removeEdge(id: EdgeIdT)
+
     fun clear()
-
 }

@@ -1,6 +1,6 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
-data class Node<DataT>(
-    val id: Int,
-    val data: DataT
+data class Node<IdT, DataT>(
+    val id: IdT,
+    var data: DataT
 )
