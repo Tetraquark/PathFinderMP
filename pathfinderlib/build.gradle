@@ -6,7 +6,8 @@ repositories {
 
 kotlin {
     targets {
-        final def iOSTarget = System.getenv('SDK_NAME')?.startsWith("iphoneos") ? presets.iosArm64 : presets.iosX64
+        final def iOSTarget = System.getenv('SDK_NAME')?.startsWith("iphoneos") \
+                              ? presets.iosArm64 : presets.iosX64
 
         fromPreset(iOSTarget, 'iOS') {
             compilations.main.outputKinds('FRAMEWORK')
@@ -14,6 +15,7 @@ kotlin {
 
         fromPreset(presets.jvm, 'jvm')
     }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -46,6 +48,11 @@ kotlin {
             }
         }
     }
+}
+
+// workaround for https://youtrack.jetbrains.com/issue/KT-27170
+configurations {
+    compileClasspath
 }
 
 task packForXCode(type: Sync) {
