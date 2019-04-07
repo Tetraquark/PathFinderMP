@@ -105,7 +105,8 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
 
     override fun getEdge(from: Node<NodeIdT, NodeDataT>, to: Node<NodeIdT, NodeDataT>): Edge<EdgeIdT, EdgeWeightT>? {
         return if(from in this && to in this) {
-            edges.values.firstOrNull { from in it && to in it }
+            // TODO: change firstOrNull predicate for directed graph
+            edges.values.firstOrNull { (from in it && to in it) || (to in it && from in it) }
         } else {
             null
         }
