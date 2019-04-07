@@ -6,6 +6,7 @@ interface Graph<NodeDataT, EdgeWeightT> : Iterable<Node<NodeDataT>> {
     fun getEdgesOfNode(node: Node<NodeDataT>): List<Edge<EdgeWeightT>>?
     fun nodesCount(): Int
     fun edgesCount(): Int
+    fun getNode(id: Int): Node<NodeDataT>?
 
     operator fun contains(node: Node<NodeDataT>?): Boolean
     operator fun contains(edge: Edge<EdgeWeightT>?): Boolean

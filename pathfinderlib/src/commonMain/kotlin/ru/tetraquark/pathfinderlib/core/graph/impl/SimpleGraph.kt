@@ -12,17 +12,40 @@ class SimpleGraph<NodeDataT, EdgeWeightT> : MutableGraph<NodeDataT, EdgeWeightT>
 
     override fun edgesCount(): Int = edges.size
 
-    override fun addNode(id: Int, data: NodeDataT): Node<NodeDataT> = Node(id, data).apply {
-        nodes[id] = this
+    private fun findFirstFreeId(usedIds: List<Int>): Int {
+        var id = 0
+        while (id < Int.MAX_VALUE) {
+            if (!usedIds.contains(id))
+                return id
+            id++
+        }
+        throw IndexOutOfBoundsException("No more ids left!")
+    }
+
+    override fun addNode(data: NodeDataT): Node<NodeDataT>? {
+        return try {
+            val id = if (!nodes.contains(nodes.size)) nodes.size else findFirstFreeId(nodes.keys.toList())
+            Node(id, data).apply {
+                nodes[id] = this
+            }
+        } catch (e: IndexOutOfBoundsException) {
+            null
+        }
     }
 
     override fun addEdge(
-        id: Int,
         from: Node<NodeDataT>,
         to: Node<NodeDataT>,
         weight: EdgeWeightT
-    ): Edge<EdgeWeightT>? = Edge(id, from, to, weight).apply {
-        edges[id] = this
+    ): Edge<EdgeWeightT>? {
+        return try {
+            val id = if (!edges.contains(edges.size)) edges.size else findFirstFreeId(edges.keys.toList())
+            Edge(id, from, to, weight).apply {
+                edges[id] = this
+            }
+        } catch (e: IndexOutOfBoundsException) {
+            null
+        }
     }
 
     override fun removeNode(node: Node<NodeDataT>) {
@@ -30,7 +53,19 @@ class SimpleGraph<NodeDataT, EdgeWeightT> : MutableGraph<NodeDataT, EdgeWeightT>
     }
 
     override fun removeNode(id: Int) {
+        nodes[id].let { n ->
+            val markedForDelete = ArrayList<Int>()
+            for ((eKey, eValue) in edges) {
+                if (eValue.contains(n))
+                    markedForDelete.add(eKey)
+            }
+            markedForDelete.forEach { removeEdge(it) }
+        }
         nodes.remove(id)
+    }
+
+    override fun getNode(id: Int): Node<NodeDataT>? {
+        return nodes[id]
     }
 
     override fun removeEdge(edge: Edge<EdgeWeightT>) {
@@ -67,4 +102,8 @@ class SimpleGraph<NodeDataT, EdgeWeightT> : MutableGraph<NodeDataT, EdgeWeightT>
     override operator fun contains(edge: Edge<EdgeWeightT>?): Boolean = edge?.id in edges.keys
 
     override fun iterator(): Iterator<Node<NodeDataT>> = nodes.values.iterator()
+
+    // test
+    fun getNodes() = nodes
+    fun getEdges() = edges
 }
