@@ -9,7 +9,7 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
     private val nodeIdFactory: UniqueIdFactory<NodeIdT>?,
     private val edgeIdFactory: UniqueIdFactory<EdgeIdT>?
 ) : MutableGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> {
-    private val edges = mutableMapOf<EdgeIdT, Edge<EdgeIdT, EdgeWeightT>>()
+    private val edges = mutableMapOf<EdgeIdT, Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>>()
     private val nodes = mutableMapOf<NodeIdT, Node<NodeIdT, NodeDataT>>()
 
     override fun nodesCount(): Int = nodes.size
@@ -50,7 +50,7 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
         from: Node<NodeIdT, NodeDataT>,
         to: Node<NodeIdT, NodeDataT>,
         weight: EdgeWeightT
-    ): Edge<EdgeIdT, EdgeWeightT>? {
+    ): Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>? {
         return if(edgeIdFactory != null) {
             val uniqueId = generateUniqueId({
                 edgeIdFactory.getUniqueId()
@@ -69,7 +69,7 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
         from: Node<NodeIdT, NodeDataT>,
         to: Node<NodeIdT, NodeDataT>,
         weight: EdgeWeightT
-    ): Edge<EdgeIdT, EdgeWeightT>? {
+    ): Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>? {
         return Edge(id, from, to, weight).apply {
             edges[id] = this
         }
@@ -90,7 +90,7 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
 
     override fun getNode(id: NodeIdT): Node<NodeIdT, NodeDataT>? = nodes[id]
 
-    override fun removeEdge(edge: Edge<EdgeIdT, EdgeWeightT>) {
+    override fun removeEdge(edge: Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>) {
         edges.remove(edge.id)
     }
 
@@ -103,7 +103,7 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
         nodes.clear()
     }
 
-    override fun getEdge(from: Node<NodeIdT, NodeDataT>, to: Node<NodeIdT, NodeDataT>): Edge<EdgeIdT, EdgeWeightT>? {
+    override fun getEdge(from: Node<NodeIdT, NodeDataT>, to: Node<NodeIdT, NodeDataT>): Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>? {
         return if(from in this && to in this) {
             // TODO: change firstOrNull predicate for directed graph
             edges.values.firstOrNull { (from in it && to in it) || (to in it && from in it) }
@@ -112,23 +112,22 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
         }
     }
 
-    override fun getEdgesOfNode(node: Node<NodeIdT, NodeDataT>): List<Edge<EdgeIdT, EdgeWeightT>>? {
+    override fun getEdgesOfNode(node: Node<NodeIdT, NodeDataT>): List<Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>> {
         return if(node in this) {
             edges.values.filter { it.contains(node) }
         } else {
-            null
+            listOf()
         }
     }
 
     override operator fun contains(node: Node<NodeIdT, NodeDataT>?): Boolean = node?.id in nodes.keys
 
-    override operator fun contains(edge: Edge<EdgeIdT, EdgeWeightT>?): Boolean = edge?.id in edges.keys
+    override operator fun contains(edge: Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>?): Boolean = edge?.id in edges.keys
 
     override fun iterator(): Iterator<Node<NodeIdT, NodeDataT>> = nodes.values.iterator()
 
-    // TODO: test
-    fun getNodes() = nodes
-    fun getEdges() = edges
+    override fun getNodes() = nodes
+    override fun getEdges() = edges
 
     private inline fun <T> generateUniqueId(
         idGenerator: () -> T,

@@ -14,12 +14,19 @@ class CellMap(
         private const val DEFAULT_EDGES_WEIGHT = 1
     }
 
+    private var startCell: MapCell? = null
+    private var finishCell: MapCell? = null
+
     override fun setStartCell(x: Int, y: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (x in 0..width && y in 0..height) {
+            startCell = cellList[fromCoordsToKey(x, y, width)]
+        }
     }
 
     override fun setFinishCell(x: Int, y: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (x in 0..width && y in 0..height) {
+            finishCell = cellList[fromCoordsToKey(x, y, width)]
+        }
     }
 
     private var cellList: MutableList<MapCell> = mutableListOf()
@@ -43,16 +50,16 @@ class CellMap(
                     val node = graph.putNode(nodeId, cell)
                     if(node != null) {
                         if(i > 0) {
-                            tyrToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
                         }
                         if(i < width - 1) {
-                            tyrToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
                         }
                         if(j > 0) {
-                            tyrToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, height))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, height))
                         }
                         if(j < height - 1) {
-                            tyrToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, height))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, height))
                         }
                     }
                 }
@@ -81,7 +88,7 @@ class CellMap(
 
     private fun fromCoordsToKey(x: Int, y: Int, width: Int): Int = x + width * y
 
-    private fun tyrToConnectTwoNodes(from: Node<Int, MapCell>, toNodeId: Int) {
+    private fun tryToConnectTwoNodes(from: Node<Int, MapCell>, toNodeId: Int) {
         graph.getNode(toNodeId)?.let {
             if(it.data.cellType != CellType.BLOCK) {
                 addNewEdge(from, it, DEFAULT_EDGES_WEIGHT)

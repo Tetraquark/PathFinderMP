@@ -7,12 +7,14 @@ import ru.tetraquark.pathfinderlib.core.map.CellType
 import ru.tetraquark.pathfinderlib.core.map.Map
 import ru.tetraquark.pathfinderlib.core.map.MapAdapter
 import ru.tetraquark.pathfinderlib.core.map.impl.CellMap
+import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
 
 fun main(args: Array<String>) {
     val cliApp = CliApp()
 
     cliApp.multiplatformTest()
     cliApp.tests_1()
+    cliApp.tests_2()
     println(" ")
     cliApp.drawMap(cliApp.testMap)
 }
@@ -76,6 +78,49 @@ class CliApp {
         println("edges ${g.getEdges()}")
     }
 
+    fun tests_2() {
+        val g = SimpleGraph<Int, String, Int, Int>(nodesIdFactory, edgesIdFactory)
+        println("1: add nodes")
+        g.addNode("firstNode")
+        g.addNode("secondNode")
+        g.addNode("thirdNode")
+        g.addNode("forthNode")
+        println("graph $g")
+        println("nodes ${g.getNodes()}")
+        println("edges ${g.getEdges()}")
+        println("2: add edges")
+        var from = g.getNode(4)
+        var to = g.getNode(5)
+        if (from != null && to != null)
+            g.addEdge(from, to, 1)
+
+        from = g.getNode(5)
+        to = g.getNode(6)
+        if (from != null && to != null) {
+            g.addEdge(from, to, 1)
+        }
+
+        from = g.getNode(5)
+        to = g.getNode(7)
+        if (from != null && to != null) {
+            g.addEdge(from, to, 1)
+        }
+
+        from = g.getNode(6)
+        to = g.getNode(7)
+        if (from != null && to != null) {
+            g.addEdge(from, to, 1)
+        }
+        println("graph $g")
+        println("nodes ${g.getNodes()}")
+        println("edges ${g.getEdges()}")
+
+        val alg = WaveAlgorithm<Int, String, Int, Int>()
+        println("3: find path from 4 to 7")
+        val path = alg.findPath(g, 4, 7)
+        println("path $path")
+    }
+
     fun drawMap(map: Map) {
         val it = map.iterator()
         while (it.hasNext()) {
@@ -93,7 +138,7 @@ class CliApp {
 
     private fun createMap(): Map {
         return CellMap(SimpleGraph(nodesIdFactory, edgesIdFactory)).apply {
-            adapter = object : MapAdapter() {
+            val adapter = object : MapAdapter() {
 
                 override fun getCellType(x: Int, y: Int): CellType {
                     if(x == 2 && y == 1)

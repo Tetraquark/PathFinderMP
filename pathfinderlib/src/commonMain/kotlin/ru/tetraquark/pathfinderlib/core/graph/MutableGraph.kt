@@ -11,20 +11,20 @@ interface MutableGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> :
         from: Node<NodeIdT, NodeDataT>,
         to: Node<NodeIdT, NodeDataT>,
         weight: EdgeWeightT
-    ): Edge<EdgeIdT, EdgeWeightT>?
+    ): Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>?
 
     fun putEdge(
         id: EdgeIdT,
         from: Node<NodeIdT, NodeDataT>,
         to: Node<NodeIdT, NodeDataT>,
         weight: EdgeWeightT
-    ): Edge<EdgeIdT, EdgeWeightT>?
+    ): Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>?
 
     fun removeNode(node: Node<NodeIdT, NodeDataT>)
 
     fun removeNode(id: NodeIdT)
 
-    fun removeEdge(edge: Edge<EdgeIdT, EdgeWeightT>)
+    fun removeEdge(edge: Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>)
 
     fun removeEdge(id: EdgeIdT)
 
