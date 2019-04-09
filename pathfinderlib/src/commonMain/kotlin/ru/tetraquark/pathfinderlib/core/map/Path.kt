@@ -1,4 +1,4 @@
 package ru.tetraquark.pathfinderlib.core.map
 
-class Path {
+class Path<NodeDataT>(val waypoints: List<NodeDataT>) {
 }

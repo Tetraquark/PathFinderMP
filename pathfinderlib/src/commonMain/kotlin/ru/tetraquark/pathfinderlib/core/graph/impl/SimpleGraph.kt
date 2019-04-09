@@ -138,4 +138,12 @@ class SimpleGraph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(
         } while (isIdExist(uniqueId))
         return uniqueId
     }
+
+    override fun getNodeByData(data: NodeDataT): Node<NodeIdT, NodeDataT>? {
+        for (node in nodes)
+            if (node.value.data == data)
+                return node.value
+        return null
+    }
+
 }

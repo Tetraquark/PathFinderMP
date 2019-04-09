@@ -3,13 +3,40 @@ package ru.tetraquark.pathfinderlib.core.pathfinder.algorithms
 import ru.tetraquark.pathfinderlib.core.graph.Graph
 import ru.tetraquark.pathfinderlib.core.graph.Node
 import ru.tetraquark.pathfinderlib.core.map.Map
+import ru.tetraquark.pathfinderlib.core.map.MapCell
 import ru.tetraquark.pathfinderlib.core.map.Path
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
 class WaveAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> : PathFinderAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> {
 
-    override fun findPath(graph: Map): Path {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun findPath(map: Map<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>): Path<NodeDataT> {
+        println("findPath started")
+        val startCell = map.getStartCell()
+        val finishCell = map.getFinishCell()
+        println("start $startCell finish $finishCell")
+        if (startCell != null && finishCell != null) {
+            println("points OK")
+            val g = map.getGraph()
+            var startId: NodeIdT? = null
+            var finishId: NodeIdT? = null
+            for (node in g.getNodes()) {
+                if (node.value.data == startCell)
+                    startId = node.key
+                if (node.value.data == finishCell)
+                    finishId = node.key
+            }
+            println("sid $startId fid $finishId")
+            if (startId != null && finishId != null) {
+                println("graph ids OK")
+                val path = findPath(g, startId, finishId)
+                println("path $path")
+                val wp = ArrayList<NodeDataT>()
+                for (node in path)
+                    wp.add(node.data)
+                return Path(wp)
+            }
+        }
+        return Path(listOf())
     }
 
     override fun findPath(graph: Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>, startId: NodeIdT, finishId: NodeIdT): List<Node<NodeIdT, NodeDataT>> {

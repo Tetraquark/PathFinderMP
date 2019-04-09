@@ -20,4 +20,6 @@ interface Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> :
     fun getNodes(): Map<NodeIdT, Node<NodeIdT, NodeDataT>>
 
     fun getEdges(): Map<EdgeIdT, Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>>
+
+    fun getNodeByData(data: NodeDataT): Node<NodeIdT, NodeDataT>?
 }

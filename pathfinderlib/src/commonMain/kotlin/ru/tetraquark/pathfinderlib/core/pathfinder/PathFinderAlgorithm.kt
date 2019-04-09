@@ -7,7 +7,7 @@ import ru.tetraquark.pathfinderlib.core.map.Path
 
 interface PathFinderAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> {
 
-    fun findPath(graph: Map): Path
+    fun findPath(map: Map<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>): Path<NodeDataT>
 
     fun findPath(graph: Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>, startId: NodeIdT, finishId: NodeIdT): List<Node<NodeIdT, NodeDataT>>
 
