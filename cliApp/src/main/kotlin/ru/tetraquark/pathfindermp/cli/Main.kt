@@ -131,7 +131,7 @@ class CliApp {
                 cellSymbol = "#"
             }
             print(cellSymbol)
-            if(cell.x == map.width) {
+            if(cell.x == map.width - 1) {
                 print("\n")
             }
         }
@@ -149,7 +149,7 @@ class CliApp {
                 cell in path.waypoints -> cellSymbol = "."
             }
             print(cellSymbol)
-            if(cell.x == map.width) {
+            if(cell.x == map.width - 1) {
                 print("\n")
             }
         }
@@ -189,9 +189,9 @@ class CliApp {
 
     fun tests_3() {
         val alg = WaveAlgorithm<Int, MapCell, Int, Int>()
-        println("3: find path from [0,0] to [7,6]")
+        println("3: find path from [0,0] to [6,5]")
         testMap.setStartCell(0, 0)
-        testMap.setFinishCell(7, 6)
+        testMap.setFinishCell(6, 5)
         val path = alg.findPath(testMap)
         println("path ${path.waypoints}")
         drawMap(testMap, path)

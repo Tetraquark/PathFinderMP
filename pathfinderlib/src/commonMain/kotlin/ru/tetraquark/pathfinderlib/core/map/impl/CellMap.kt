@@ -24,19 +24,15 @@ class CellMap(
 
     override fun setStartCell(x: Int, y: Int) {
         println("x $x y $y width $width")
-        if (x in 0..width && y in 0..height) {
-            for (cell in cellList)
-                if (cell.x == x && cell.y == y)
-                    startCell = cell
+        if (x in 0 until width && y in 0 until height) {
+            startCell = cellList[fromCoordsToKey(x, y, width)]
         }
     }
 
     override fun setFinishCell(x: Int, y: Int) {
         println("x $x y $y width $width")
-        if (x in 0..width && y in 0..height) {
-            for (cell in cellList)
-                if (cell.x == x && cell.y == y)
-                    finishCell = cell
+        if (x in 0 until width && y in 0 until height) {
+            finishCell = cellList[fromCoordsToKey(x, y, width)]
         }
     }
 
@@ -59,30 +55,31 @@ class CellMap(
 
         cellList = mutableListOf()
         println("edges before ${graph.getEdges()}")
-        for(j in (0..height)) {
-            for(i in (0..width)) {
+        for(j in (0 until height)) {
+            for(i in (0 until width)) {
                 val cell = MapCell(i, j, adapter.getCellType(i, j))
+                val nodeId = fromCoordsToKey(i, j, width)
+                val node = graph.putNode(nodeId, cell)
 
                 if(cell.cellType == CellType.OPEN) {
                     // creates nodes and edges with with adjacent nodes
-                    val node = graph.addNode(cell)
                     if(node != null) {
                         println("x $i y $j w $width")
                         if(i > 0) {
                             println("to x ${i - 1} y $j")
-                            tryToConnectTwoNodes(node, findNode(i - 1, j))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
                         }
                         if(i < width - 1) {
                             println("to x ${i + 1} y $j")
-                            tryToConnectTwoNodes(node, findNode(i + 1, j))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
                         }
                         if(j > 0) {
                             println("to x $i y ${j - 1}")
-                            tryToConnectTwoNodes(node, findNode(i, j - 1))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, width))
                         }
                         if(j < height - 1) {
                             println("to x $i y ${j + 1}")
-                            tryToConnectTwoNodes(node, findNode(i, j + 1))
+                            tryToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, width))
                         }
                     }
                 }
