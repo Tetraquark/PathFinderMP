@@ -9,13 +9,13 @@ import ru.tetraquark.pathfinderlib.core.map.MapAdapter
 import ru.tetraquark.pathfinderlib.core.map.MapCell
 
 class CellMap(
-    graph: MutableGraph<Int, MapCell, Int, Int>
-) : Map<Int, MapCell, Int, Int>(graph) {
+    graph: MutableGraph<MapCell, Int>
+) : Map<MapCell, Int>(graph) {
     companion object {
         private const val DEFAULT_EDGES_WEIGHT = 1
     }
 
-    override fun getGraph(): Graph<Int, MapCell, Int, Int> {
+    override fun getGraph(): Graph<MapCell, Int> {
         return graph
     }
 
@@ -109,7 +109,7 @@ class CellMap(
 
     private fun fromCoordsToKey(x: Int, y: Int, width: Int): Int = x + width * y
 
-    private fun findNode(x: Int, y: Int): Node<Int, MapCell>? {
+    private fun findNode(x: Int, y: Int): Node<MapCell>? {
         for (cell in cellList)
             if (cell.x == x && cell.y == y)
                 return graph.getNodeByData(cell)
@@ -117,7 +117,7 @@ class CellMap(
         return null
     }
 
-    private fun tryToConnectTwoNodes(from: Node<Int, MapCell>, toNodeId: Int) {
+    private fun tryToConnectTwoNodes(from: Node<MapCell>, toNodeId: Int) {
         graph.getNode(toNodeId)?.let {
             println("tryToConnectTwoNodes: connecting (${from.id})${from.data} -> (${it.id})${it.data}")
             if(it.data.cellType != CellType.BLOCK) {
@@ -126,7 +126,7 @@ class CellMap(
         }
     }
 
-    private fun tryToConnectTwoNodes(from: Node<Int, MapCell>, to: Node<Int, MapCell>?) {
+    private fun tryToConnectTwoNodes(from: Node<MapCell>, to: Node<MapCell>?) {
         to?.let {
             println("tryToConnectTwoNodes: connecting (${from.id})${from.data} -> (${it.id})${it.data}")
             if(it.data.cellType != CellType.BLOCK) {
@@ -135,7 +135,7 @@ class CellMap(
         }
     }
 
-    private fun addNewEdge(from: Node<Int, MapCell>, to: Node<Int, MapCell>, weight: Int) {
+    private fun addNewEdge(from: Node<MapCell>, to: Node<MapCell>, weight: Int) {
         // if there is no such edge yet
         if(graph.getEdge(from, to) == null) {
             graph.addEdge(from, to, weight)

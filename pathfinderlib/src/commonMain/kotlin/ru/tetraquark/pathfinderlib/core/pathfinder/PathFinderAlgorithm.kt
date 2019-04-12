@@ -5,10 +5,10 @@ import ru.tetraquark.pathfinderlib.core.graph.Node
 import ru.tetraquark.pathfinderlib.core.map.Map
 import ru.tetraquark.pathfinderlib.core.map.Path
 
-interface PathFinderAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> {
+interface PathFinderAlgorithm<NodeDataT, EdgeWeightT> {
 
-    fun findPath(map: Map<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>): Path<NodeDataT>
+    fun findPath(map: Map<NodeDataT, EdgeWeightT>): Path<NodeDataT>
 
-    fun findPath(graph: Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>, startId: NodeIdT, finishId: NodeIdT): List<Node<NodeIdT, NodeDataT>>
+    fun findPath(graph: Graph<NodeDataT, EdgeWeightT>, startId: Int, finishId: Int): List<Node<NodeDataT>>
 
 }

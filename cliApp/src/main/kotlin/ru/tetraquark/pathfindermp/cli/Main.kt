@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 }
 
 class CliApp {
-    val testMap: Map<Int, MapCell, Int, Int>
+    val testMap: Map<MapCell, Int>
 
     private var nodesCounter = 0
     private var edgesCounter = 0
@@ -43,7 +43,7 @@ class CliApp {
     }
 
     fun tests_1() {
-        val g = SimpleGraph<Int, String, Int, Int>(nodesIdFactory, edgesIdFactory)
+        val g = SimpleGraph<String, Int>(nodesIdFactory, edgesIdFactory)
         println("1: add nodes")
         g.addNode("firstNode")
         g.addNode("secondNode")
@@ -80,7 +80,7 @@ class CliApp {
     }
 
     fun tests_2() {
-        val g = SimpleGraph<Int, String, Int, Int>(nodesIdFactory, edgesIdFactory)
+        val g = SimpleGraph<String, Int>(nodesIdFactory, edgesIdFactory)
         println("1: add nodes")
         g.addNode("firstNode")
         g.addNode("secondNode")
@@ -116,13 +116,13 @@ class CliApp {
         println("nodes ${g.getNodes()}")
         println("edges ${g.getEdges()}")
 
-        val alg = WaveAlgorithm<Int, String, Int, Int>()
+        val alg = WaveAlgorithm<String, Int>()
         println("3: find path from 4 to 7")
         val path = alg.findPath(g, 4, 7)
         println("path $path")
     }
 
-    fun drawMap(map: Map<Int, MapCell, Int, Int>) {
+    fun drawMap(map: Map<MapCell, Int>) {
         val it = map.iterator()
         while (it.hasNext()) {
             val cell = it.next()
@@ -137,7 +137,7 @@ class CliApp {
         }
     }
 
-    fun drawMap(map: Map<Int, MapCell, Int, Int>, path: Path<MapCell>) {
+    fun drawMap(map: Map<MapCell, Int>, path: Path<MapCell>) {
         val it = map.iterator()
         while (it.hasNext()) {
             val cell = it.next()
@@ -155,7 +155,7 @@ class CliApp {
         }
     }
 
-    private fun createMap(): Map<Int, MapCell, Int, Int> {
+    private fun createMap(): Map<MapCell, Int> {
         return CellMap(SimpleGraph(nodesIdFactory, edgesIdFactory)).apply {
             val adapter = object : MapAdapter() {
 
@@ -188,7 +188,7 @@ class CliApp {
     }
 
     fun tests_3() {
-        val alg = WaveAlgorithm<Int, MapCell, Int, Int>()
+        val alg = WaveAlgorithm<MapCell, Int>()
         println("3: find path from [0,0] to [6,5]")
         testMap.setStartCell(0, 0)
         testMap.setFinishCell(6, 5)

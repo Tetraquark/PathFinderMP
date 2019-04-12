@@ -7,9 +7,9 @@ import ru.tetraquark.pathfinderlib.core.map.MapCell
 import ru.tetraquark.pathfinderlib.core.map.Path
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
-class WaveAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> : PathFinderAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> {
+class WaveAlgorithm<NodeDataT, EdgeWeightT> : PathFinderAlgorithm<NodeDataT, EdgeWeightT> {
 
-    override fun findPath(map: Map<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>): Path<NodeDataT> {
+    override fun findPath(map: Map<NodeDataT, EdgeWeightT>): Path<NodeDataT> {
         println("findPath started")
         val startCell = map.getStartCell()
         val finishCell = map.getFinishCell()
@@ -17,8 +17,8 @@ class WaveAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> : PathFinderAlgori
         if (startCell != null && finishCell != null) {
             println("points OK")
             val g = map.getGraph()
-            var startId: NodeIdT? = null
-            var finishId: NodeIdT? = null
+            var startId: Int? = null
+            var finishId: Int? = null
             for (node in g.getNodes()) {
                 if (node.value.data == startCell)
                     startId = node.key
@@ -39,13 +39,13 @@ class WaveAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> : PathFinderAlgori
         return Path(listOf())
     }
 
-    override fun findPath(graph: Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>, startId: NodeIdT, finishId: NodeIdT): List<Node<NodeIdT, NodeDataT>> {
-        val path = ArrayList<Node<NodeIdT, NodeDataT>>()
+    override fun findPath(graph: Graph<NodeDataT, EdgeWeightT>, startId: Int, finishId: Int): List<Node<NodeDataT>> {
+        val path = ArrayList<Node<NodeDataT>>()
 
-        val markT = HashMap<NodeIdT, Int>()
+        val markT = HashMap<Int, Int>()
 
-        val oldFront = ArrayList<Node<NodeIdT, NodeDataT>>()
-        val newFront = ArrayList<Node<NodeIdT, NodeDataT>>()
+        val oldFront = ArrayList<Node<NodeDataT>>()
+        val newFront = ArrayList<Node<NodeDataT>>()
 
         var t = 0
         var curNode = graph.getNode(startId)

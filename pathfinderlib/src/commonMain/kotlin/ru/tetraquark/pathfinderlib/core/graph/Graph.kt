@@ -1,25 +1,25 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
-interface Graph<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT> :
-    Iterable<Node<NodeIdT, NodeDataT>> {
+interface Graph<NodeDataT, EdgeWeightT> :
+    Iterable<Node<NodeDataT>> {
 
-    fun getEdge(from: Node<NodeIdT, NodeDataT>, to: Node<NodeIdT, NodeDataT>): Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>?
+    fun getEdge(from: Node<NodeDataT>, to: Node<NodeDataT>): Edge<EdgeWeightT, NodeDataT>?
 
-    fun getEdgesOfNode(node: Node<NodeIdT, NodeDataT>): List<Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>>
+    fun getEdgesOfNode(node: Node<NodeDataT>): List<Edge<EdgeWeightT, NodeDataT>>
 
     fun nodesCount(): Int
 
     fun edgesCount(): Int
 
-    fun getNode(id: NodeIdT): Node<NodeIdT, NodeDataT>?
+    fun getNode(id: Int): Node<NodeDataT>?
 
-    operator fun contains(node: Node<NodeIdT, NodeDataT>?): Boolean
+    operator fun contains(node: Node<NodeDataT>?): Boolean
 
-    operator fun contains(edge: Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>?): Boolean
+    operator fun contains(edge: Edge<EdgeWeightT, NodeDataT>?): Boolean
 
-    fun getNodes(): Map<NodeIdT, Node<NodeIdT, NodeDataT>>
+    fun getNodes(): Map<Int, Node<NodeDataT>>
 
-    fun getEdges(): Map<EdgeIdT, Edge<EdgeIdT, EdgeWeightT, NodeIdT, NodeDataT>>
+    fun getEdges(): Map<Int, Edge<EdgeWeightT, NodeDataT>>
 
-    fun getNodeByData(data: NodeDataT): Node<NodeIdT, NodeDataT>?
+    fun getNodeByData(data: NodeDataT): Node<NodeDataT>?
 }

@@ -3,8 +3,8 @@ package ru.tetraquark.pathfinderlib.core.pathfinder
 import ru.tetraquark.pathfinderlib.core.map.Map
 import ru.tetraquark.pathfinderlib.core.map.Path
 
-class PathFinder<CellDataT, NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>(var pathFinderAlgorithm: PathFinderAlgorithm<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>) {
+class PathFinder<NodeDataT, EdgeWeightT>(var pathFinderAlgorithm: PathFinderAlgorithm<NodeDataT, EdgeWeightT>) {
 
-    fun findPath(map: Map<NodeIdT, NodeDataT, EdgeIdT, EdgeWeightT>): Path<NodeDataT> = pathFinderAlgorithm.findPath(map)
+    fun findPath(map: Map<NodeDataT, EdgeWeightT>): Path<NodeDataT> = pathFinderAlgorithm.findPath(map)
 
 }
