@@ -5,7 +5,7 @@ interface Graph<NodeDataT, EdgeWeightT> :
 
     fun getEdge(from: Node<NodeDataT>, to: Node<NodeDataT>): Edge<EdgeWeightT, NodeDataT>?
 
-    fun getEdgesOfNode(node: Node<NodeDataT>): List<Edge<EdgeWeightT, NodeDataT>>
+    fun getEdgesOfNode(node: Node<*>): List<Edge<EdgeWeightT, NodeDataT>>
 
     fun nodesCount(): Int
 

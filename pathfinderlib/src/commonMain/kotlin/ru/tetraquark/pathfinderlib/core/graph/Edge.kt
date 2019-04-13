@@ -7,7 +7,7 @@ data class Edge<WeightT, NodeDataT>(
     val weight: WeightT
 ) {
 
-    operator fun contains(node: Node<NodeDataT>?): Boolean =
+    operator fun contains(node: Node<*>?): Boolean =
         node == from || node == to
 
     fun getFrom(): Node<NodeDataT> = from

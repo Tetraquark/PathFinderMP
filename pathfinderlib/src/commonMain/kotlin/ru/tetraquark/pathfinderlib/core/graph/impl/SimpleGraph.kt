@@ -112,7 +112,7 @@ class SimpleGraph<NodeDataT, EdgeWeightT>(
         }
     }
 
-    override fun getEdgesOfNode(node: Node<NodeDataT>): List<Edge<EdgeWeightT, NodeDataT>> {
+    override fun getEdgesOfNode(node: Node<*>): List<Edge<EdgeWeightT, NodeDataT>> {
         return if(node in this) {
             edges.values.filter { it.contains(node) }
         } else {

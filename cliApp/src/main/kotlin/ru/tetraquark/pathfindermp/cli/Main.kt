@@ -4,8 +4,8 @@ import ru.tetraquark.pathfinderlib.core.TestHello
 import ru.tetraquark.pathfinderlib.core.graph.UniqueIdFactory
 import ru.tetraquark.pathfinderlib.core.graph.impl.SimpleGraph
 import ru.tetraquark.pathfinderlib.core.map.*
-import ru.tetraquark.pathfinderlib.core.map.Map
-import ru.tetraquark.pathfinderlib.core.map.impl.CellMap
+import ru.tetraquark.pathfinderlib.core.map.WorldMap
+import ru.tetraquark.pathfinderlib.core.map.impl.CellWorldMap
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
 
 fun main(args: Array<String>) {
@@ -14,14 +14,14 @@ fun main(args: Array<String>) {
     cliApp.multiplatformTest()
     //cliApp.tests_1()
     //cliApp.tests_2()
-    println(" ")
-    cliApp.drawMap(cliApp.testMap)
-    println()
+    println("Draw map")
+    cliApp.drawMap(cliApp.testWorldMap)
+    println("tests_3")
     cliApp.tests_3()
 }
 
 class CliApp {
-    val testMap: Map<MapCell, Int>
+    val testWorldMap: WorldMap
 
     private var nodesCounter = 0
     private var edgesCounter = 0
@@ -35,7 +35,7 @@ class CliApp {
     }
 
     init {
-        testMap = createMap()
+        testWorldMap = createMap()
     }
 
     fun multiplatformTest() {
@@ -116,14 +116,16 @@ class CliApp {
         println("nodes ${g.getNodes()}")
         println("edges ${g.getEdges()}")
 
-        val alg = WaveAlgorithm<String, Int>()
+        val alg = WaveAlgorithm<Int>()
         println("3: find path from 4 to 7")
-        val path = alg.findPath(g, 4, 7)
-        println("path $path")
+        from = g.getNode(4)
+        to = g.getNode(7)
+        if(from != null && to != null)
+            println("path ${alg.findPath(g, from, to)}")
     }
 
-    fun drawMap(map: Map<MapCell, Int>) {
-        val it = map.iterator()
+    fun drawMap(worldMap: WorldMap) {
+        val it = worldMap.iterator()
         while (it.hasNext()) {
             val cell = it.next()
             var cellSymbol = "o"
@@ -131,70 +133,78 @@ class CliApp {
                 cellSymbol = "#"
             }
             print(cellSymbol)
-            if(cell.x == map.width - 1) {
+            if(cell.x == worldMap.width - 1) {
                 print("\n")
             }
         }
     }
 
-    fun drawMap(map: Map<MapCell, Int>, path: Path<MapCell>) {
-        val it = map.iterator()
+    fun drawMap(worldMap: WorldMap, path: Path) {
+        val it = worldMap.iterator()
         while (it.hasNext()) {
             val cell = it.next()
             var cellSymbol = "o"
             when {
                 cell.cellType == CellType.BLOCK -> cellSymbol = "#"
-                cell == map.getStartCell() -> cellSymbol = "X"
-                cell == map.getFinishCell() -> cellSymbol = "+"
-                cell in path.waypoints -> cellSymbol = "."
+                cell == path.getStartCell() -> cellSymbol = "X"
+                cell == path.getStartCell() -> cellSymbol = "+"
+                cell in path -> cellSymbol = "."
             }
             print(cellSymbol)
-            if(cell.x == map.width - 1) {
+            if(cell.x == worldMap.width - 1) {
                 print("\n")
             }
         }
     }
 
-    private fun createMap(): Map<MapCell, Int> {
-        return CellMap(SimpleGraph(nodesIdFactory, edgesIdFactory)).apply {
-            val adapter = object : MapAdapter() {
+    private fun createMap(): WorldMap {
+        val adapter = object : MapAdapter<Int>() {
+            override fun getPathWeight(fromX: Int, fromY: Int, toX: Int, toY: Int): Int = 1
 
-                override fun getCellType(x: Int, y: Int): CellType {
-                    if(x == 2 && y == 1)
-                        return CellType.BLOCK
-                    if(x == 3 && y == 1)
-                        return CellType.BLOCK
-                    if(x == 2 && y == 2)
-                        return CellType.BLOCK
-                    if(x == 3 && y == 2)
-                        return CellType.BLOCK
-                    if(x == 0 && y == 3)
-                        return CellType.BLOCK
-                    if(x == 1 && y == 4)
-                        return CellType.BLOCK
-                    if(x == 4 && y == 4)
-                        return CellType.BLOCK
-                    if(x == 5 && y == 4)
-                        return CellType.BLOCK
+            override fun getCellType(x: Int, y: Int): CellType {
+                if(x == 2 && y == 0)
+                    return CellType.BLOCK
+                if(x == 2 && y == 1)
+                    return CellType.BLOCK
+                if(x == 3 && y == 1)
+                    return CellType.BLOCK
+                if(x == 2 && y == 2)
+                    return CellType.BLOCK
+                if(x == 3 && y == 2)
+                    return CellType.BLOCK
+                if(x == 0 && y == 3)
+                    return CellType.BLOCK
+                if(x == 1 && y == 4)
+                    return CellType.BLOCK
+                if(x == 2 && y == 4)
+                    return CellType.BLOCK
+                if(x == 3 && y == 4)
+                    return CellType.BLOCK
+                if(x == 4 && y == 4)
+                    return CellType.BLOCK
+                if(x == 5 && y == 4)
+                    return CellType.BLOCK
+                if(x == 5 && y == 3)
+                    return CellType.BLOCK
+                if(x == 5 && y == 2)
+                    return CellType.BLOCK
 
-                    return CellType.OPEN
-                }
-
-                override fun getHeight(): Int = 6
-                override fun getWidth(): Int = 7
+                return CellType.OPEN
             }
-            reloadMap(adapter)
+
+            override fun getHeight(): Int = 6
+            override fun getWidth(): Int = 7
         }
+
+        return CellWorldMap(SimpleGraph(nodesIdFactory, edgesIdFactory), adapter)
     }
 
     fun tests_3() {
-        val alg = WaveAlgorithm<MapCell, Int>()
+        val alg = WaveAlgorithm<Int>()
         println("3: find path from [0,0] to [6,5]")
-        testMap.setStartCell(0, 0)
-        testMap.setFinishCell(6, 5)
-        val path = alg.findPath(testMap)
-        println("path ${path.waypoints}")
-        drawMap(testMap, path)
+        val path = testWorldMap.findPath(Pair(0, 0), Pair(6, 5), alg)
+        println("path $path")
+        drawMap(testWorldMap, path)
     }
 
 }
