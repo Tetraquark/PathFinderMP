@@ -25,7 +25,7 @@ interface MainContract {
         fun drawPath(path: Path)
         fun clearMap()
 
-        fun showError()
+        fun showError(text: String)
     }
 
     interface Presenter {

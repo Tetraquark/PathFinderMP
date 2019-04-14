@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TableRow
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.tetraquark.pathfinderlib.core.TestHello
@@ -172,8 +173,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         map_table.removeAllViews()
     }
 
-    override fun showError() {
-        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showError(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     private fun createCell(cellType: CellType, isStart: Boolean, isFinis: Boolean, isPath: Boolean): View {

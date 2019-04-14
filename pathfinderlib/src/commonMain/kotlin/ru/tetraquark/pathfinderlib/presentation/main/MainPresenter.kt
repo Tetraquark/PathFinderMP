@@ -9,6 +9,10 @@ import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
 
 class MainPresenter : MainContract.Presenter {
+    companion object {
+        const val MAX_MAP_WIDTH = 100
+        const val MAX_MAP_HEIGHT = 100
+    }
     private var view: MainContract.View? = null
 
     private var currentMap: WorldMap? = null
@@ -29,22 +33,27 @@ class MainPresenter : MainContract.Presenter {
 
     override fun onGenerateAction() {
         view?.let {
-            it.clearMap()
 
             val mapWidth = it.getInputMapWidth()
             val mapHeight = it.getInputMapHeight()
 
+            if(mapWidth > MAX_MAP_WIDTH || mapWidth <= 0 || mapHeight > MAX_MAP_HEIGHT || mapHeight <= 0) {
+                it.showError("Wrong input map width or height.")
+                return
+            }
+
+            it.clearMap()
             val currentMap = mapGenerator.generateMap(
                 mapWidth,
                 mapHeight,
                 SimpleGraph(SimpleGraphIdCounter(), SimpleGraphIdCounter())
             )
 
-            if(currentMap != null) {
+            if (currentMap != null) {
                 this.currentMap = currentMap
                 it.drawMap(currentMap)
             } else {
-                // TODO: show error
+                it.showError("Can't generate map.")
             }
         }
     }
@@ -60,8 +69,6 @@ class MainPresenter : MainContract.Presenter {
     }
 
     override fun onCellClick(point: Pair<Int, Int>) {
-        // TODO: coordinates validation
-
         val selectedCell = currentMap?.getCell(point.first, point.second)
         if (selectedCell != null && selectedCell.cellType != CellType.BLOCK) {
             if (appState == MainContract.AppState.GENERATE_MAP) {
@@ -80,12 +87,17 @@ class MainPresenter : MainContract.Presenter {
     }
 
     private fun finishCellSelected(point: Pair<Int, Int>) {
-        // TODO: coordinates validation
-        val startCell = this.startCell
         val currentMap = this.currentMap
+
+        if (currentMap == null || point.first < 0 || point.first >= currentMap.width
+            || point.second < 0 || point.second >= currentMap.height) {
+            return
+        }
+
+        val startCell = this.startCell
         val algorithm = view?.getSelectedAlgorithm()
 
-        if(startCell != null && currentMap != null && algorithm != null) {
+        if (startCell != null && algorithm != null) {
             val path = currentMap.findPath(startCell, point, createAlgorithm(algorithm))
 
             changeAppState(MainContract.AppState.SHOWING_RESULTS)
@@ -102,9 +114,10 @@ class MainPresenter : MainContract.Presenter {
         view?.showHintForState(appState)
     }
 
-    private fun createAlgorithm(routingAlgorithm: RoutingAlgorithm): PathFinderAlgorithm<Int> = when(routingAlgorithm) {
-        RoutingAlgorithm.WAVE -> WaveAlgorithm()
-    }
+    private fun createAlgorithm(routingAlgorithm: RoutingAlgorithm): PathFinderAlgorithm<Int> =
+        when (routingAlgorithm) {
+            RoutingAlgorithm.WAVE -> WaveAlgorithm()
+        }
 
     private class SimpleGraphIdCounter : UniqueIdFactory<Int> {
         private var idCounter = 0

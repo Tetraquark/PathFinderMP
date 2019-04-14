@@ -68,7 +68,6 @@ class CellWorldMap(
         finishPoint: Pair<Int, Int>,
         algorithm: PathFinderAlgorithm<Int>
     ): Path {
-        // TODO: add input points validation
         val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
         val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
 
