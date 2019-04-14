@@ -21,33 +21,6 @@ class CellWorldMap(
         reloadMap()
     }
 
-    /*
-    private var startCell: MapCell? = null
-    private var finishCell: MapCell? = null
-
-    override fun setStartCell(x: Int, y: Int) {
-        println("x $x y $y width $width")
-        if (x in 0 until width && y in 0 until height) {
-            startCell = cellList[fromCoordsToKey(x, y, width)]
-        }
-    }
-
-    override fun setFinishCell(x: Int, y: Int) {
-        println("x $x y $y width $width")
-        if (x in 0 until width && y in 0 until height) {
-            finishCell = cellList[fromCoordsToKey(x, y, width)]
-        }
-    }
-
-    override fun getStartCell(): MapCell? {
-        return startCell
-    }
-
-    override fun getFinishCell(): MapCell? {
-        return finishCell
-    }
-    */
-
     override fun reloadMap() {
         pathGraph.clear()
 
@@ -55,7 +28,6 @@ class CellWorldMap(
         height = adapter.getHeight()
 
         cellList = mutableListOf()
-        println("edges before ${pathGraph.getEdges()}")
         for(j in (0 until height)) {
             for(i in (0 until width)) {
                 val cell = MapCell(i, j, adapter.getCellType(i, j))
@@ -65,31 +37,24 @@ class CellWorldMap(
                 if(cell.cellType == CellType.OPEN) {
                     // creates nodes and edges with with adjacent nodes
                     if(node != null) {
-                        println("x $i y $j w $width")
                         if(i > 0) {
-                            println("to x ${i - 1} y $j")
                             tryToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
                         }
                         if(i < width - 1) {
-                            println("to x ${i + 1} y $j")
                             tryToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
                         }
                         if(j > 0) {
-                            println("to x $i y ${j - 1}")
                             tryToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, width))
                         }
                         if(j < height - 1) {
-                            println("to x $i y ${j + 1}")
                             tryToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, width))
                         }
                     }
                 }
 
-                //cellList[nodeId] = cell
                 cellList.add(cell)
             }
         }
-        println("edges ${pathGraph.getEdges()}")
     }
 
     override fun findPath(
@@ -109,22 +74,6 @@ class CellWorldMap(
         return Path()
     }
 
-    /**
-     * List of map cells [cells]
-     */
-    /*
-    fun reloadMap(width: Int, height: Int, cells: List<CellType>) {
-        reloadMap(object : MapAdapter() {
-            override fun getWidth(): Int = width
-
-            override fun getHeight(): Int = height
-
-            override fun getCellType(x: Int, y: Int): CellType =
-                cells[fromCoordsToKey(x, y, width)]
-        })
-    }
-    */
-
     override fun iterator(): Iterator<MapCell> = cellList.iterator()
 
     private fun fromCoordsToKey(x: Int, y: Int, width: Int): Int = x + width * y
@@ -142,7 +91,6 @@ class CellWorldMap(
 
     private fun tryToConnectTwoNodes(from: Node<MapCell>, toNodeId: Int) {
         pathGraph.getNode(toNodeId)?.let {
-            println("tryToConnectTwoNodes: connecting (${from.id})${from.data} -> (${it.id})${it.data}")
             if(it.data.cellType != CellType.BLOCK) {
                 addNewEdge(from, it, DEFAULT_EDGES_WEIGHT)
             }
@@ -151,7 +99,6 @@ class CellWorldMap(
 
     private fun tryToConnectTwoNodes(from: Node<MapCell>, to: Node<MapCell>?) {
         to?.let {
-            println("tryToConnectTwoNodes: connecting (${from.id})${from.data} -> (${it.id})${it.data}")
             if(it.data.cellType != CellType.BLOCK) {
                 addNewEdge(from, it, DEFAULT_EDGES_WEIGHT)
             }
