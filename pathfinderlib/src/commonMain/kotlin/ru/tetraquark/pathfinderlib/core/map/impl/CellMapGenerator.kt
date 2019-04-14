@@ -17,7 +17,7 @@ class CellMapGenerator : MapGenerator {
         for(i in 0 until cellsNum) {
             var cellType = CellType.OPEN
             if(blockCellsNum > 0) {
-                if(Random.nextBoolean()) {
+                if(Random.nextInt(0, 100) < 20) {
                     cellType = CellType.BLOCK
                     blockCellsNum--
                 }

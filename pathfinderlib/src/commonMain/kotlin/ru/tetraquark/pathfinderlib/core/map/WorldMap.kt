@@ -15,6 +15,8 @@ abstract class WorldMap(
 
     abstract fun reloadMap()
 
+    abstract fun getCell(x: Int, y: Int): MapCell?
+
     abstract fun findPath(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,

@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:text="Hint"/>
+            android:text="@string/hint_generate_map"/>
 
     <LinearLayout
             android:id="@+id/container_inputs"
@@ -23,32 +23,51 @@
             android:orientation="horizontal">
 
         <EditText
+                android:id="@+id/input_width"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:inputType="number"
+                android:text="10"
                 android:hint="Width"/>
 
         <EditText
+                android:id="@+id/input_height"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:inputType="number"
+                android:text="10"
                 android:hint="Height"/>
     </LinearLayout>
 
+    <Spinner
+            android:id="@+id/algorithms_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/container_inputs"/>
+
     <Button
-            android:id="@+id/button_generate"
+            android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/container_inputs"
-            android:text="Generate"/>
+            android:layout_below="@+id/algorithms_spinner"
+            android:text="@string/generate"/>
 
     <FrameLayout
             android:id="@+id/container_map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/button_generate"
+            android:layout_below="@+id/button"
             android:layout_above="@+id/text_time">
+
+        <GridLayout
+                android:id="@+id/map_table"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </GridLayout>
+
     </FrameLayout>
 
     <TextView

@@ -57,12 +57,18 @@ class CellWorldMap(
         }
     }
 
+    override fun getCell(x: Int, y: Int): MapCell? {
+        if(x < 0 || x >= width || y < 0 || y >= height)
+            return null
+        return cellList[fromCoordsToKey(x, y, width)]
+    }
+
     override fun findPath(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,
         algorithm: PathFinderAlgorithm<Int>
     ): Path {
-        // TODO: add input points borders check
+        // TODO: add input points validation
         val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
         val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
 

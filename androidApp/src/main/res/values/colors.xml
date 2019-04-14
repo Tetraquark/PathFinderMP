@@ -3,4 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="cell_open">#eee</color>
+    <color name="cell_block">#888</color>
+    <color name="cell_path">#06799F</color>
+    <color name="cell_start">#00C12B</color>
+    <color name="cell_finish">#8106A9</color>
+
 </resources>

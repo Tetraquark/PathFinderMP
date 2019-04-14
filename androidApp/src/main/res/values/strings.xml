@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">PathFinderMP</string>
+
+    <string name="generate">Generate</string>
+    <string name="clear">Clear</string>
+
+    <string name="hint_generate_map">Set parameters, generate map and select start cell</string>
+    <string name="hint_select_finish">Select finish cell</string>
+    <string name="hint_in_progress">The route search in progress</string>
+    <string name="hint_clear">Clear the map and repeat</string>
+
 </resources>

@@ -10,7 +10,15 @@ interface MainContract {
         fun getInputMapHeight(): Int
         fun getSelectedAlgorithm(): RoutingAlgorithm
 
+        fun showHintForState(state: AppState)
         fun showAvailableRoutingAlgorithms(routingAlgorithms: List<RoutingAlgorithm>)
+        fun enableGenerateAction()
+        fun disableGenerateAction()
+        fun enableClearAction()
+        fun disableClearAction()
+        fun setStartCell(point: Pair<Int, Int>)
+        fun showProgress()
+        fun hideProgress()
         fun showTime(time: Long)
         fun showIterationsCount(iterations: Int)
         fun drawMap(map: WorldMap)
@@ -24,10 +32,15 @@ interface MainContract {
         fun attachView(view: View)
         fun detachView()
 
-        fun onClearButtonClick()
-        fun onGenerateButtonClick()
-        fun onStartCellSelected(point: Pair<Int, Int>)
-        fun onFinishCellSelected(point: Pair<Int, Int>)
+        fun onClearAction()
+        fun onGenerateAction()
+        fun onCellClick(point: Pair<Int, Int>)
     }
 
+    enum class AppState {
+        GENERATE_MAP,
+        SELECT_FINISH,
+        FIND_ROUTE_PROGRESS,
+        SHOWING_RESULTS
+    }
 }
