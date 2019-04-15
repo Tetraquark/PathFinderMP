@@ -6,6 +6,16 @@ import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
 class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
 
+    private var iterationResultsCallback:((Map<Int, Int>) -> Unit)? = null
+
+    fun setIterationResultsCallback(callback: (Map<Int, Int>) -> Unit) {
+        iterationResultsCallback = callback
+    }
+
+    fun clearIterationResultsCallback() {
+        iterationResultsCallback = null
+    }
+
     override fun findPath(graph: Graph<*, EdgeWeightT>, startNode: Node<*>, finishNode: Node<*>): List<Node<*>> {
         val path = ArrayList<Node<*>>()
 
@@ -35,6 +45,8 @@ class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
                     }
                 }
             }
+
+            iterationResultsCallback?.let { it(markT) }
 
             if (newFront.isEmpty())
                 break
@@ -100,5 +112,4 @@ class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
         return Path(listOf())
     }
     */
-
 }

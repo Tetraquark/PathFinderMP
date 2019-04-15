@@ -26,6 +26,7 @@ interface MainContract {
         fun clearMap()
 
         fun showError(text: String)
+        fun showIterationResultsWaveTest(marks: Map<Int, Int>)
     }
 
     interface Presenter {

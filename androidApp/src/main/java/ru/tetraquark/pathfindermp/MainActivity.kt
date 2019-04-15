@@ -4,9 +4,11 @@ import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TableRow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     private var startCell: Pair<Int, Int>? = null
 
-    private val gridViews = mutableListOf<View>()
+    private val gridViews = mutableListOf<TextView>()
     private var gridMapSize: Point = Point(0, 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -177,13 +179,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
-    private fun createCell(cellType: CellType, isStart: Boolean, isFinis: Boolean, isPath: Boolean): View {
+    private fun createCell(cellType: CellType, isStart: Boolean, isFinis: Boolean, isPath: Boolean): TextView {
         val color = getColorForCellType(cellType, isStart, isFinis, isPath)
 
         val shape = ContextCompat.getDrawable(this, R.drawable.cell_shape) as GradientDrawable
         shape.setColor(color)
 
-        return View(this).apply {
+        return TextView(this).apply {
             background = shape
         }
     }
@@ -199,9 +201,15 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             CellType.BLOCK -> ContextCompat.getColor(this, R.color.cell_block)
         }
 
-    private fun changeCellColor(view: View, color: Int) {
+    private fun changeCellColor(view: TextView, color: Int) {
         val shape = ContextCompat.getDrawable(this, R.drawable.cell_shape) as GradientDrawable
         shape.setColor(color)
         view.background = shape
+    }
+
+    override fun showIterationResultsWaveTest(marks: Map<Int, Int>) {
+        for ((nodeId, nodeVal) in marks) {
+            gridViews[nodeId].text = nodeVal.toString()
+        }
     }
 }

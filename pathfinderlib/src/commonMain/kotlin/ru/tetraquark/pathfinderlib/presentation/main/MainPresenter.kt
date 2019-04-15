@@ -98,7 +98,11 @@ class MainPresenter : MainContract.Presenter {
         val algorithm = view?.getSelectedAlgorithm()
 
         if (startCell != null && algorithm != null) {
-            val path = currentMap.findPath(startCell, point, createAlgorithm(algorithm))
+            val path = currentMap.findPath(
+                startCell,
+                point,
+                createAlgorithm(algorithm)
+            )
 
             changeAppState(MainContract.AppState.SHOWING_RESULTS)
             view?.let {
@@ -116,7 +120,11 @@ class MainPresenter : MainContract.Presenter {
 
     private fun createAlgorithm(routingAlgorithm: RoutingAlgorithm): PathFinderAlgorithm<Int> =
         when (routingAlgorithm) {
-            RoutingAlgorithm.WAVE -> WaveAlgorithm()
+            RoutingAlgorithm.WAVE -> {
+                val wa = WaveAlgorithm<Int>()
+                view?.let { wa.setIterationResultsCallback(it::showIterationResultsWaveTest) }
+                wa
+            }
         }
 
     private class SimpleGraphIdCounter : UniqueIdFactory<Int> {
