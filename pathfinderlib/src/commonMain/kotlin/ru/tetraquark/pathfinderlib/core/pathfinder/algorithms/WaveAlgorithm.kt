@@ -3,20 +3,11 @@ package ru.tetraquark.pathfinderlib.core.pathfinder.algorithms
 import ru.tetraquark.pathfinderlib.core.graph.Graph
 import ru.tetraquark.pathfinderlib.core.graph.Node
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
+import ru.tetraquark.pathfinderlib.core.pathfinder.algorithmresults.WaveAlgorithmResult
 
 class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
 
-    private var iterationResultsCallback:((Map<Int, Int>) -> Unit)? = null
-
-    fun setIterationResultsCallback(callback: (Map<Int, Int>) -> Unit) {
-        iterationResultsCallback = callback
-    }
-
-    fun clearIterationResultsCallback() {
-        iterationResultsCallback = null
-    }
-
-    override fun findPath(graph: Graph<*, EdgeWeightT>, startNode: Node<*>, finishNode: Node<*>): List<Node<*>> {
+    override fun findPath(graph: Graph<*, EdgeWeightT>, startNode: Node<*>, finishNode: Node<*>): WaveAlgorithmResult {
         val path = ArrayList<Node<*>>()
 
         val markT = HashMap<Int, Int>()
@@ -45,8 +36,6 @@ class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
                     }
                 }
             }
-
-            iterationResultsCallback?.let { it(markT) }
 
             if (newFront.isEmpty())
                 break
@@ -78,7 +67,7 @@ class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
                 }
             }
         }
-        return path.reversed()
+        return WaveAlgorithmResult(path.reversed())
     }
 
     /*

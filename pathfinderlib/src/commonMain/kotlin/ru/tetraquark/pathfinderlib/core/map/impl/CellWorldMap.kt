@@ -73,7 +73,7 @@ class CellWorldMap(
 
         if(startNode != null && finishNode != null) {
             val pathNodes = algorithm.findPath(pathGraph, startNode, finishNode)
-            return getPathFromNodesList(pathNodes)
+            return getPathFromNodesList(pathNodes.path)
         }
 
         return Path()
