@@ -4,6 +4,8 @@ import ru.tetraquark.pathfinderlib.core.graph.MutableGraph
 import ru.tetraquark.pathfinderlib.core.graph.Node
 import ru.tetraquark.pathfinderlib.core.map.*
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
+import ru.tetraquark.pathfinderlib.core.pathfinder.algorithmresults.WaveAlgorithmResult
+import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
 
 class CellWorldMap(
     pathGraph: MutableGraph<MapCell, Int>,
@@ -67,16 +69,30 @@ class CellWorldMap(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,
         algorithm: PathFinderAlgorithm<Int>
-    ): Path {
+    ): ComputationResult {
         val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
         val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
 
         if(startNode != null && finishNode != null) {
-            val pathNodes = algorithm.findPath(pathGraph, startNode, finishNode)
-            return getPathFromNodesList(pathNodes.path)
+            val result = algorithm.findPath(pathGraph, startNode, finishNode)
+            val viz = when (algorithm) {
+                is WaveAlgorithm<Int> -> {
+                    val iterList = ArrayList<Map<MapCell, Int>>()
+                    for (iteration in (result as WaveAlgorithmResult).iterationResultsList) {
+                        val mapIter = HashMap<MapCell, Int>()
+                        for ((nodeKey, nodeValue) in iteration) {
+                            mapIter[cellList[nodeKey]] = nodeValue
+                        }
+                        iterList.add(mapIter)
+                    }
+                    WaveAlgorithmVisualization(iterList)
+                }
+                else -> null
+            }
+            return ComputationResult(getPathFromNodesList(result.path), viz)
         }
 
-        return Path()
+        return ComputationResult(Path(), null)
     }
 
     override fun iterator(): Iterator<MapCell> = cellList.iterator()

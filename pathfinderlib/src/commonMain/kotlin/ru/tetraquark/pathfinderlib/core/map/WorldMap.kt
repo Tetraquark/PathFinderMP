@@ -21,5 +21,5 @@ abstract class WorldMap(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,
         algorithm: PathFinderAlgorithm<Int>
-    ): Path
+    ): ComputationResult
 }

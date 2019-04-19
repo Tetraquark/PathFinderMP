@@ -1,5 +1,7 @@
 package ru.tetraquark.pathfinderlib.presentation.main
 
+import ru.tetraquark.pathfinderlib.core.map.AlgorithmVisualization
+import ru.tetraquark.pathfinderlib.core.map.ComputationResult
 import ru.tetraquark.pathfinderlib.core.map.Path
 import ru.tetraquark.pathfinderlib.core.map.WorldMap
 
@@ -16,6 +18,8 @@ interface MainContract {
         fun disableGenerateAction()
         fun enableClearAction()
         fun disableClearAction()
+        fun enableIteration()
+        fun disableIteration()
         fun setStartCell(point: Pair<Int, Int>)
         fun showProgress()
         fun hideProgress()
@@ -23,10 +27,10 @@ interface MainContract {
         fun showIterationsCount(iterations: Int)
         fun drawMap(map: WorldMap)
         fun drawPath(path: Path)
+        fun pushComputationResult(res: ComputationResult)
         fun clearMap()
 
         fun showError(text: String)
-        fun showIterationResultsWaveTest(marks: Map<Int, Int>)
     }
 
     interface Presenter {

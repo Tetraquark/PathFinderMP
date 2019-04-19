@@ -4,8 +4,6 @@ import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TableRow
 import android.widget.TextView
@@ -13,9 +11,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.tetraquark.pathfinderlib.core.TestHello
-import ru.tetraquark.pathfinderlib.core.map.CellType
-import ru.tetraquark.pathfinderlib.core.map.Path
-import ru.tetraquark.pathfinderlib.core.map.WorldMap
+import ru.tetraquark.pathfinderlib.core.map.*
+import ru.tetraquark.pathfinderlib.core.map.impl.WaveAlgorithmVisualization
 import ru.tetraquark.pathfinderlib.presentation.main.MainContract
 import ru.tetraquark.pathfinderlib.presentation.main.MainPresenter
 import ru.tetraquark.pathfinderlib.presentation.main.RoutingAlgorithm
@@ -29,6 +26,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     private val gridViews = mutableListOf<TextView>()
     private var gridMapSize: Point = Point(0, 0)
 
+    private var algoViz: AlgorithmVisualization? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,6 +38,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         map_table.viewTreeObserver.addOnGlobalLayoutListener {
             gridMapSize = Point(map_table.width, map_table.height)
+        }
+
+        iterButton.setOnClickListener {
+            drawNextViz()
         }
     }
 
@@ -91,6 +94,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun disableClearAction() {
         button.isEnabled = false
+    }
+
+    override fun enableIteration() {
+        iterButton.isEnabled = true
+    }
+
+    override fun disableIteration() {
+        iterButton.isEnabled = false
     }
 
     override fun showProgress() {
@@ -207,9 +218,29 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         view.background = shape
     }
 
-    override fun showIterationResultsWaveTest(marks: Map<Int, Int>) {
-        for ((nodeId, nodeVal) in marks) {
-            gridViews[nodeId].text = nodeVal.toString()
+    override fun pushComputationResult(res: ComputationResult) {
+        val pathLen = res.path.count()
+        res.path.forEachIndexed { index, mapCell ->
+            val color = when (index) {
+                0 -> getColorForCellType(CellType.OPEN, isStart = true, isFinis = false, isPath = false)
+                pathLen - 1 -> getColorForCellType(CellType.OPEN, isStart = false, isFinis = true, isPath = false)
+                else -> getColorForCellType(CellType.OPEN, isStart = false, isFinis = false, isPath = true)
+            }
+            changeCellColor(gridViews[mapCell.x + map_table.columnCount * mapCell.y], color)
+        }
+        algoViz = res.viz
+    }
+
+    private fun drawNextViz() {
+        algoViz?.let {
+            when (it) {
+                is WaveAlgorithmVisualization -> {
+                    val iter = it.nextIteration()
+                    for ((mapCell, cellVal) in iter) {
+                        gridViews[mapCell.x + map_table.columnCount * mapCell.y].text = cellVal.toString()
+                    }
+                }
+            }
         }
     }
 }

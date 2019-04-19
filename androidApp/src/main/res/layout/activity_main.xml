@@ -47,19 +47,31 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/container_inputs"/>
 
+    <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/algorithms_spinner"
+            android:orientation="horizontal">
     <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/algorithms_spinner"
             android:text="@string/generate"/>
+
+    <Button
+            android:id="@+id/iterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/next_iteration"/>
+    </LinearLayout>
 
     <FrameLayout
             android:id="@+id/container_map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/button"
+            android:layout_below="@+id/buttons"
             android:layout_above="@+id/text_time">
 
         <GridLayout

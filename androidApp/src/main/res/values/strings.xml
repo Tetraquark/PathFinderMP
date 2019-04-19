@@ -3,6 +3,7 @@
 
     <string name="generate">Generate</string>
     <string name="clear">Clear</string>
+    <string name="next_iteration">Next Iter</string>
 
     <string name="hint_generate_map">Set parameters, generate map and select start cell</string>
     <string name="hint_select_finish">Select finish cell</string>

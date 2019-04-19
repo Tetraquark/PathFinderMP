@@ -64,6 +64,7 @@ class MainPresenter : MainContract.Presenter {
         view?.let {
             it.clearMap()
             it.disableClearAction()
+            it.disableIteration()
             it.enableGenerateAction()
         }
     }
@@ -98,7 +99,7 @@ class MainPresenter : MainContract.Presenter {
         val algorithm = view?.getSelectedAlgorithm()
 
         if (startCell != null && algorithm != null) {
-            val path = currentMap.findPath(
+            val res = currentMap.findPath(
                 startCell,
                 point,
                 createAlgorithm(algorithm)
@@ -107,8 +108,10 @@ class MainPresenter : MainContract.Presenter {
             changeAppState(MainContract.AppState.SHOWING_RESULTS)
             view?.let {
                 it.hideProgress()
-                it.drawPath(path)
+                //it.drawPath(path)
+                it.pushComputationResult(res)
                 it.enableClearAction()
+                it.enableIteration()
             }
         }
     }
@@ -121,9 +124,7 @@ class MainPresenter : MainContract.Presenter {
     private fun createAlgorithm(routingAlgorithm: RoutingAlgorithm): PathFinderAlgorithm<Int> =
         when (routingAlgorithm) {
             RoutingAlgorithm.WAVE -> {
-                val wa = WaveAlgorithm<Int>()
-                view?.let { wa.setIterationResultsCallback(it::showIterationResultsWaveTest) }
-                wa
+                WaveAlgorithm()
             }
         }
 
