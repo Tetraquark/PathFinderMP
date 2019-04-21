@@ -6,7 +6,7 @@ import kotlin.random.Random
 
 class CellMapGenerator : MapGenerator {
 
-    override fun generateMap(width: Int, height: Int, pathGraph: MutableGraph<MapCell, Int>): WorldMap? {
+    override fun generateMap(width: Int, height: Int, pathGraph: MutableGraph<MapCell>): WorldMap? {
         if(width < 2 || height < 2)
             return null
 
@@ -37,5 +37,4 @@ class CellMapGenerator : MapGenerator {
 
         return CellWorldMap(pathGraph, adapter)
     }
-
 }

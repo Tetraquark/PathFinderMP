@@ -43,7 +43,7 @@ class CliApp {
     }
 
     fun tests_1() {
-        val g = SimpleGraph<String, Int>(nodesIdFactory, edgesIdFactory)
+        val g = SimpleGraph<String>(nodesIdFactory, edgesIdFactory)
         println("1: add nodes")
         g.addNode("firstNode")
         g.addNode("secondNode")
@@ -80,7 +80,7 @@ class CliApp {
     }
 
     fun tests_2() {
-        val g = SimpleGraph<String, Int>(nodesIdFactory, edgesIdFactory)
+        val g = SimpleGraph<String>(nodesIdFactory, edgesIdFactory)
         println("1: add nodes")
         g.addNode("firstNode")
         g.addNode("secondNode")
@@ -116,7 +116,7 @@ class CliApp {
         println("nodes ${g.getNodes()}")
         println("edges ${g.getEdges()}")
 
-        val alg = WaveAlgorithm<Int>()
+        val alg = WaveAlgorithm()
         println("3: find path from 4 to 7")
         from = g.getNode(4)
         to = g.getNode(7)
@@ -200,7 +200,7 @@ class CliApp {
     }
 
     fun tests_3() {
-        val alg = WaveAlgorithm<Int>()
+        val alg = WaveAlgorithm()
         println("3: find path from [0,0] to [6,5]")
         val path = testWorldMap.findPath(Pair(0, 0), Pair(6, 5), alg)
         println("path $path")

@@ -1,16 +1,12 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
-data class Edge<WeightT, NodeDataT>(
+data class Edge<NodeDataT>(
     val id: Int,
-    private val from: Node<NodeDataT>,
-    private val to: Node<NodeDataT>,
-    val weight: WeightT
+    val from: Node<NodeDataT>,
+    val to: Node<NodeDataT>,
+    val weight: Int
 ) {
 
     operator fun contains(node: Node<*>?): Boolean =
         node == from || node == to
-
-    fun getFrom(): Node<NodeDataT> = from
-    fun getTo(): Node<NodeDataT> = to
-
 }

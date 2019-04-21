@@ -1,15 +1,12 @@
 package ru.tetraquark.pathfinderlib.core.graph.impl
 
-import ru.tetraquark.pathfinderlib.core.graph.Edge
-import ru.tetraquark.pathfinderlib.core.graph.MutableGraph
-import ru.tetraquark.pathfinderlib.core.graph.Node
-import ru.tetraquark.pathfinderlib.core.graph.UniqueIdFactory
+import ru.tetraquark.pathfinderlib.core.graph.*
 
-class SimpleGraph<NodeDataT, EdgeWeightT>(
+class SimpleGraph<NodeDataT>(
     private val nodeIdFactory: UniqueIdFactory<Int>?,
     private val edgeIdFactory: UniqueIdFactory<Int>?
-) : MutableGraph<NodeDataT, EdgeWeightT> {
-    private val edges = mutableMapOf<Int, Edge<EdgeWeightT, NodeDataT>>()
+) : MutableGraph<NodeDataT> {
+    private val edges = mutableMapOf<Int, Edge<NodeDataT>>()
     private val nodes = mutableMapOf<Int, Node<NodeDataT>>()
 
     override fun nodesCount(): Int = nodes.size
@@ -49,8 +46,8 @@ class SimpleGraph<NodeDataT, EdgeWeightT>(
     override fun addEdge(
         from: Node<NodeDataT>,
         to: Node<NodeDataT>,
-        weight: EdgeWeightT
-    ): Edge<EdgeWeightT, NodeDataT>? {
+        weight: Int
+    ): Edge<NodeDataT>? {
         return if(edgeIdFactory != null) {
             val uniqueId = generateUniqueId({
                 edgeIdFactory.getUniqueId()
@@ -68,8 +65,8 @@ class SimpleGraph<NodeDataT, EdgeWeightT>(
         id: Int,
         from: Node<NodeDataT>,
         to: Node<NodeDataT>,
-        weight: EdgeWeightT
-    ): Edge<EdgeWeightT, NodeDataT>? {
+        weight: Int
+    ): Edge<NodeDataT>? {
         return Edge(id, from, to, weight).apply {
             edges[id] = this
         }
@@ -90,7 +87,7 @@ class SimpleGraph<NodeDataT, EdgeWeightT>(
 
     override fun getNode(id: Int): Node<NodeDataT>? = nodes[id]
 
-    override fun removeEdge(edge: Edge<EdgeWeightT, NodeDataT>) {
+    override fun removeEdge(edge: Edge<NodeDataT>) {
         edges.remove(edge.id)
     }
 
@@ -103,18 +100,18 @@ class SimpleGraph<NodeDataT, EdgeWeightT>(
         nodes.clear()
     }
 
-    override fun getEdge(from: Node<NodeDataT>, to: Node<NodeDataT>): Edge<EdgeWeightT, NodeDataT>? {
+    override fun getEdge(from: Node<NodeDataT>, to: Node<NodeDataT>): Edge<NodeDataT>? {
         return if(from in this && to in this) {
             // TODO: change firstOrNull predicate for directed graph
-            edges.values.firstOrNull { (from in it && to in it) || (to in it && from in it) }
+            edges.values.firstOrNull { from == it.from && to == it.to }
         } else {
             null
         }
     }
 
-    override fun getEdgesOfNode(node: Node<*>): List<Edge<EdgeWeightT, NodeDataT>> {
+    override fun getEdgesOfNode(node: Node<*>): List<Edge<NodeDataT>> {
         return if(node in this) {
-            edges.values.filter { it.contains(node) }
+            edges.values.filter { it.from == node }
         } else {
             listOf()
         }
@@ -122,7 +119,7 @@ class SimpleGraph<NodeDataT, EdgeWeightT>(
 
     override operator fun contains(node: Node<NodeDataT>?): Boolean = node?.id in nodes.keys
 
-    override operator fun contains(edge: Edge<EdgeWeightT, NodeDataT>?): Boolean = edge?.id in edges.keys
+    override operator fun contains(edge: Edge<NodeDataT>?): Boolean = edge?.id in edges.keys
 
     override fun iterator(): Iterator<Node<NodeDataT>> = nodes.values.iterator()
 

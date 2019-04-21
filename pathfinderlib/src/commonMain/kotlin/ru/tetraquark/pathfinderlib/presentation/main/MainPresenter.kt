@@ -6,6 +6,7 @@ import ru.tetraquark.pathfinderlib.core.map.CellType
 import ru.tetraquark.pathfinderlib.core.map.WorldMap
 import ru.tetraquark.pathfinderlib.core.map.impl.CellMapGenerator
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
+import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.DijkstraAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
 
 class MainPresenter : MainContract.Presenter {
@@ -24,7 +25,7 @@ class MainPresenter : MainContract.Presenter {
     override fun attachView(view: MainContract.View) {
         this.view = view
         view.enableGenerateAction()
-        view.showAvailableRoutingAlgorithms(listOf(RoutingAlgorithm.WAVE))
+        view.showAvailableRoutingAlgorithms(listOf(RoutingAlgorithm.WAVE, RoutingAlgorithm.DIJKSTRA))
     }
 
     override fun detachView() {
@@ -114,9 +115,10 @@ class MainPresenter : MainContract.Presenter {
         view?.showHintForState(appState)
     }
 
-    private fun createAlgorithm(routingAlgorithm: RoutingAlgorithm): PathFinderAlgorithm<Int> =
+    private fun createAlgorithm(routingAlgorithm: RoutingAlgorithm): PathFinderAlgorithm =
         when (routingAlgorithm) {
             RoutingAlgorithm.WAVE -> WaveAlgorithm()
+            RoutingAlgorithm.DIJKSTRA -> DijkstraAlgorithm()
         }
 
     private class SimpleGraphIdCounter : UniqueIdFactory<Int> {

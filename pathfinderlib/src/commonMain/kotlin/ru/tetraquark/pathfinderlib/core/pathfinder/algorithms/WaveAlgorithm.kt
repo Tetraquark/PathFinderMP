@@ -4,9 +4,9 @@ import ru.tetraquark.pathfinderlib.core.graph.Graph
 import ru.tetraquark.pathfinderlib.core.graph.Node
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
-class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
+class WaveAlgorithm : PathFinderAlgorithm {
 
-    override fun findPath(graph: Graph<*, EdgeWeightT>, startNode: Node<*>, finishNode: Node<*>): List<Node<*>> {
+    override fun findPath(graph: Graph<*>, startNode: Node<*>, finishNode: Node<*>): List<Node<*>> {
         val path = ArrayList<Node<*>>()
 
         val markT = HashMap<Int, Int>()
@@ -28,7 +28,7 @@ class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
         do {
             for (node in oldFront) {
                 for (edge in graph.getEdgesOfNode(node)) {
-                    curNode = if (edge.getFrom() == node) edge.getTo() else edge.getFrom()
+                    curNode = if (edge.from == node) edge.to else edge.from
                     if (markT[curNode.id] == -1) {
                         markT[curNode.id] = t + 1
                         newFront.add(curNode)
@@ -57,7 +57,7 @@ class WaveAlgorithm<EdgeWeightT> : PathFinderAlgorithm<EdgeWeightT> {
             while (t >= 0) {
                 val edges = graph.getEdgesOfNode(curNode)
                 for (edge in edges) {
-                    val neighbour = if (edge.getFrom() == curNode) edge.getTo() else edge.getFrom()
+                    val neighbour = if (edge.from == curNode) edge.to else edge.from
                     if (markT[neighbour.id] == t) {
                         path.add(neighbour)
                         t--

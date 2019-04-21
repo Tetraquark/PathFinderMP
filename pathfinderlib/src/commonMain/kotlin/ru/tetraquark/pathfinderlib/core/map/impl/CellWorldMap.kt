@@ -6,7 +6,7 @@ import ru.tetraquark.pathfinderlib.core.map.*
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
 class CellWorldMap(
-    pathGraph: MutableGraph<MapCell, Int>,
+    pathGraph: MutableGraph<MapCell>,
     adapter: MapAdapter<Int>
 ) : WorldMap(pathGraph, adapter) {
 
@@ -32,9 +32,9 @@ class CellWorldMap(
             for(i in (0 until width)) {
                 val cell = MapCell(i, j, adapter.getCellType(i, j))
                 val nodeId = fromCoordsToKey(i, j, width)
-                val node = pathGraph.putNode(nodeId, cell)
 
                 if(cell.cellType == CellType.OPEN) {
+                    val node = pathGraph.putNode(nodeId, cell)
                     // creates nodes and edges with with adjacent nodes
                     if(node != null) {
                         if(i > 0) {
@@ -66,7 +66,7 @@ class CellWorldMap(
     override fun findPath(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,
-        algorithm: PathFinderAlgorithm<Int>
+        algorithm: PathFinderAlgorithm
     ): Path {
         val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
         val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
@@ -98,6 +98,7 @@ class CellWorldMap(
         pathGraph.getNode(toNodeId)?.let {
             if(it.data.cellType != CellType.BLOCK) {
                 addNewEdge(from, it, DEFAULT_EDGES_WEIGHT)
+                addNewEdge(it, from, DEFAULT_EDGES_WEIGHT)
             }
         }
     }

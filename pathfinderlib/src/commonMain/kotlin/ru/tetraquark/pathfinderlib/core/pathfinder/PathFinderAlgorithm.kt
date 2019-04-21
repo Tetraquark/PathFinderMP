@@ -3,8 +3,12 @@ package ru.tetraquark.pathfinderlib.core.pathfinder
 import ru.tetraquark.pathfinderlib.core.graph.Graph
 import ru.tetraquark.pathfinderlib.core.graph.Node
 
-interface PathFinderAlgorithm<EdgeWeightT> {
+interface PathFinderAlgorithm {
 
-    fun findPath(graph: Graph<*, EdgeWeightT>, startNode: Node<*>, finishNode: Node<*>): List<Node<*>>
+    fun findPath(
+        graph: Graph<*>,
+        startNode: Node<*>,
+        finishNode: Node<*>
+    ): List<Node<*>>
 
 }

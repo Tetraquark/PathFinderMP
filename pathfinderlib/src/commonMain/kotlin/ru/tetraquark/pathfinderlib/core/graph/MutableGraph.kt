@@ -1,7 +1,7 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
-interface MutableGraph<NodeDataT, EdgeWeightT> :
-    Graph<NodeDataT, EdgeWeightT> {
+interface MutableGraph<NodeDataT> :
+    Graph<NodeDataT> {
 
     fun addNode(data: NodeDataT): Node<NodeDataT>?
 
@@ -10,21 +10,21 @@ interface MutableGraph<NodeDataT, EdgeWeightT> :
     fun addEdge(
         from: Node<NodeDataT>,
         to: Node<NodeDataT>,
-        weight: EdgeWeightT
-    ): Edge<EdgeWeightT, NodeDataT>?
+        weight: Int
+    ): Edge<NodeDataT>?
 
     fun putEdge(
         id: Int,
         from: Node<NodeDataT>,
         to: Node<NodeDataT>,
-        weight: EdgeWeightT
-    ): Edge<EdgeWeightT, NodeDataT>?
+        weight: Int
+    ): Edge<NodeDataT>?
 
     fun removeNode(node: Node<NodeDataT>)
 
     fun removeNode(id: Int)
 
-    fun removeEdge(edge: Edge<EdgeWeightT, NodeDataT>)
+    fun removeEdge(edge: Edge<NodeDataT>)
 
     fun removeEdge(id: Int)
 
