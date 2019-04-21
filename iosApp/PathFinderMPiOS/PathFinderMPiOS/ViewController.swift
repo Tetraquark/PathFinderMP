@@ -108,12 +108,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     /* Handle button press */
-    /*
+    
     @IBAction func generateButton(_ sender: UIButton) {
-        cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
+        /* Do nothing for a while */
+        //cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
         //self.collectionView.reloadData()
     }
-    */
+    
     
     /* Logic */
     
@@ -170,7 +171,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func enableGenerateAction() {
         actionButton.isEnabled = true
         actionButton.setTitle("Generate", for: .normal)
-        actionButton.addTarget(self, action: "onGenerateButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+        actionButton.addTarget(self, action: Selector(("onGenerateButtonAction:")), for: UIControl.Event.touchUpInside)
     }
 
     func disableGenerateAction() {
@@ -185,7 +186,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func enableClearAction() {
         actionButton.isEnabled = true
         actionButton.setTitle("Clear", for: .normal)
-        actionButton.addTarget(self, action: "onClearButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+        actionButton.addTarget(self, action: Selector(("onClearButtonAction:")), for: UIControl.Event.touchUpInside)
     }
     
     func disableClearAction() {
@@ -200,7 +201,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func setStartCell(point: KotlinPair) {
         // тут надо поменять цвет для ячейки, которая находится по индексам point
         // правильно ли использованы координаты или поменять местами first и second?
-        let indexPath = IndexPath(item: point.second, section: point.first)
+        let indexPath = IndexPath(item: point.second as! Int, section: point.first as! Int)
         if let cell = self.collectionView.cellForItem(at: indexPath) {
             let color = UIColor.green
             // поменять цвет ячейки collectionView
@@ -230,13 +231,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         // обход карты для покраски ячеек можно сделать через итератор:
         let it = map.iterator()
         while it.hasNext() {
-            let mapCell = it.next()
+            let mapCell: MapCell = it.next() as! MapCell
             // 1) получить цвет ячейки исходя из типа mapCell.cellType (enum с константами: OPEN и BLOCK)
             // Если OPEN - то цвет белый/светлый, если BLOCK - то цвет темный/серый
             let color = UIColor.white
             // 2) применить цвет к ячейке по координатам mapCell.x и mapCell.y
             // правильно ли использованы координаты или поменять местами x и y?
-            let indexPath = IndexPath(item: mapCell.y, section: mapCell.x)
+            let indexPath = IndexPath(item: Int(mapCell.y), section: Int(mapCell.x))
             if let cell = self.collectionView.cellForItem(at: indexPath) {
                 cell.backgroundColor = color
             }
@@ -244,7 +245,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     func drawPath(path: Path) {
-        let pathLen = path.count()
+        //let pathLen = path.size()
         
         // обход пути с помощью for
         // если не сработает, то можно через итератор: path.iterator()
@@ -254,9 +255,11 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             let mapCell = it.next()
         }
         */
-        for mapCell in path {
-            // правильно ли использованы координаты или поменять местами x и y?
-            let indexPath = IndexPath(item: mapCell.y, section: mapCell.x)
+        let it = path.iterator()
+        
+        while it.hasNext() {
+            let mapCell: MapCell = it.next() as! MapCell
+            let indexPath = IndexPath(item: Int(mapCell.y), section: Int(mapCell.x))
             if let cell = self.collectionView.cellForItem(at: indexPath) {
                 // 1) если ячейка первая (индекс == 0), то получить цвет стартовой ячейки
                 // 2) если ячейка последняя (индекс == pathLen - 1), то получить цвет финальной ячейки
@@ -265,8 +268,9 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 
                 // поменять цвет ячейки collectionView
                 cell.backgroundColor = color
-            } 
+            }
         }
+        
     }
     
     func clearMap() {

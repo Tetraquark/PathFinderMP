@@ -12,6 +12,8 @@ class Path : Iterable<MapCell> {
 
     fun getFinishCell(): MapCell? = pathCoordinatesList.lastOrNull()
 
+    fun size(): Int = this.count()
+
     override fun iterator(): Iterator<MapCell> =
         pathCoordinatesList.iterator()
 
