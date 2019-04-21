@@ -17,9 +17,24 @@ abstract class WorldMap(
 
     abstract fun getCell(x: Int, y: Int): MapCell?
 
-    abstract fun findPath(
+    abstract suspend fun findPath(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,
         algorithm: PathFinderAlgorithm
     ): Path
+
+    abstract suspend fun findPathIncrementally(
+        startPoint: Pair<Int, Int>,
+        finishPoint: Pair<Int, Int>,
+        algorithm: PathFinderAlgorithm,
+        callback: ResultsCallback
+    )
+
+    interface ResultsCallback {
+
+        suspend fun onPointHandled(point: Pair<Int, Int>)
+
+        suspend fun onPathFound(path: Path)
+
+    }
 }

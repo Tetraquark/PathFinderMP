@@ -63,7 +63,7 @@ class CellWorldMap(
         return cellList[fromCoordsToKey(x, y, width)]
     }
 
-    override fun findPath(
+    override suspend fun findPath(
         startPoint: Pair<Int, Int>,
         finishPoint: Pair<Int, Int>,
         algorithm: PathFinderAlgorithm
@@ -77,6 +77,29 @@ class CellWorldMap(
         }
 
         return Path()
+    }
+
+    override suspend fun findPathIncrementally(
+        startPoint: Pair<Int, Int>,
+        finishPoint: Pair<Int, Int>,
+        algorithm: PathFinderAlgorithm,
+        callback: ResultsCallback
+    ) {
+        val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
+        val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
+
+        if(startNode != null && finishNode != null) {
+            algorithm.findPathIncrementally(pathGraph, startNode, finishNode, object : PathFinderAlgorithm.ResultsCallback {
+                override suspend fun onNodeHandled(node: Node<*>) {
+                    val cell = node.data as MapCell
+                    callback.onPointHandled(Pair(cell.x, cell.y))
+                }
+
+                override suspend fun onPathFound(path: List<Node<*>>) {
+                    callback.onPathFound(getPathFromNodesList(path))
+                }
+            })
+        }
     }
 
     override fun iterator(): Iterator<MapCell> = cellList.iterator()
