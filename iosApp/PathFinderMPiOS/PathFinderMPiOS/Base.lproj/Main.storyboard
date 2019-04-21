@@ -109,9 +109,11 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="actionButton" destination="RwD-LI-DJx" id="Ixz-ei-s78"/>
                         <outlet property="cellsInHeight" destination="BSp-ab-2bN" id="vGs-P3-DCp"/>
                         <outlet property="cellsInWidth" destination="7Bs-C5-N9Y" id="6XT-ue-76r"/>
                         <outlet property="collectionView" destination="Kql-t9-eym" id="KK4-Ir-mZW"/>
+                        <outlet property="hintLabel" destination="GWs-Gj-PfX" id="2Yg-M5-RX6"/>
                         <outlet property="pickerTextField" destination="eXe-Q9-lEN" id="SSf-mR-fPx"/>
                     </connections>
                 </viewController>

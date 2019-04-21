@@ -9,17 +9,22 @@
 import UIKit
 import main
 
-class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource  {
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, MainContractView  {
 
     @IBOutlet weak var cellsInWidth: UITextField!
     @IBOutlet weak var cellsInHeight: UITextField!
     @IBOutlet weak var pickerTextField: UITextField!
     @IBOutlet weak var collectionView: UICollectionView!
-
+    @IBOutlet weak var actionButton: UIButton!
+    @IBOutlet weak var hintLabel: UILabel!
+    
     /* Default cells count on collectionView */
     var cellsCount = 1
     /* Available algorithms */
     var pickOption = ["Wave"]
+    
+    /* Presenter */
+    var presenter = MainPresenter()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +46,14 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     override func viewDidAppear(_ animated: Bool) {
         cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        presenter.attachView(view: self)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        presenter.detachView()
     }
     
     override func didReceiveMemoryWarning() {
@@ -80,10 +93,125 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         return cell
     }
     
+    /* Change cell color after pressing first time */
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("first: \(indexPath.section) second: \(indexPath.row)")
+        let point: KotlinPair = KotlinPair(first: indexPath.section, second: indexPath.row)
+        presenter.onCellClick(point: point)
+        //let cell = collectionView.cellForItem(at: indexPath)
+        //cell?.backgroundColor = UIColor.green
+    }
+    
+    /* Change cell color after pressing second time */
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        //let cell = collectionView.cellForItem(at: indexPath)
+        //cell?.backgroundColor = UIColor.white
+    }
+    
     /* Handle button press */
     @IBAction func generateButton(_ sender: UIButton) {
         cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
         self.collectionView.reloadData()
+    }
+    
+    /* Logic */
+    
+    func getInputMapWidth() -> Int32 {
+        return Int32(cellsInWidth.text!)!
+    }
+    
+    func getInputMapHeight() -> Int32 {
+        return Int32(cellsInHeight.text!)!
+    }
+    
+    func getSelectedAlgorithm() -> RoutingAlgorithm {
+        var algorithm = RoutingAlgorithm.wave
+        for item in pickOption {
+            switch (item) {
+            case "Wave":
+                algorithm = RoutingAlgorithm.wave
+                break
+            default:
+                algorithm = RoutingAlgorithm.wave
+                break
+            }
+        }
+        return algorithm
+    }
+    
+    func showHintForState(state: MainContractAppState) {
+        switch state {
+        case MainContractAppState.generateMap:
+            hintLabel.text = "Set params, generate map, select start cell"
+        case MainContractAppState.selectFinish:
+            hintLabel.text = "Select finish cell"
+        case MainContractAppState.findRouteProgress:
+            hintLabel.text = "The route search in progress"
+        case MainContractAppState.showingResults:
+            hintLabel.text = "Clear the map and repeat"
+        default:
+            hintLabel.text = "Set params, generate map, select start cell"
+        }
+    }
+    
+    func showAvailableRoutingAlgorithms(routingAlgorithms: [RoutingAlgorithm]) {
+        /* TODO: Nothing to implement in iOS project?
+         * This data has been stored in pickOption
+         */
+    }
+    
+    func enableGenerateAction() {
+        actionButton.isEnabled = true
+        actionButton.setTitle("Generate", for: .normal)
+    }
+    
+    func disableGenerateAction() {
+        actionButton.isEnabled = false
+    }
+    
+    func enableClearAction() {
+        actionButton.isEnabled = true
+        actionButton.setTitle("Clear", for: .normal)
+    }
+    
+    func disableClearAction() {
+        actionButton.isEnabled = false
+    }
+    
+    func setStartCell(point: KotlinPair) {
+        
+    }
+    
+    func showProgress() {
+        /* TODO: Implement later */
+    }
+    
+    func hideProgress() {
+        /* TODO: Implement later */
+    }
+    
+    func showTime(time: Int64) {
+        /* TODO: Implement later */
+    }
+    
+    func showIterationsCount(iterations: Int32) {
+        /* TODO: Implement later */
+    }
+    
+    func drawMap(map: WorldMap) {
+
+    }
+    
+    func drawPath(path: Path) {
+        
+    }
+    
+    func clearMap() {
+        self.collectionView.reloadData()
+    }
+    
+    func showError(text: String) {
+        /* TODO: Implement later */
     }
 }
 
