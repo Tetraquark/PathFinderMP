@@ -31,11 +31,11 @@ The application is implemented for the following platforms:
 
 Screenshot for android app:
 
-![PathFinderMP androidApp](docs/screenshot_1.png)
+![PathFinderMP androidApp](docs/screenshot_android.png)
 
 Screenshot for iOS app:
 
-![PathFinderMP androidApp](docs/screenshot_2.png)
+![PathFinderMP androidApp](docs/screenshot_ios.png)
 
 ### Contributors
 
