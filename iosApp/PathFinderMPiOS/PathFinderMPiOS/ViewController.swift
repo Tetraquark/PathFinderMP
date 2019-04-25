@@ -9,7 +9,9 @@
 import UIKit
 import main
 
-class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, MainContractView  {
+class ViewController:   UIViewController, UIPickerViewDelegate,
+    UIPickerViewDataSource, UICollectionViewDelegate,
+UICollectionViewDataSource, MainContractView  {
 
     @IBOutlet weak var cellsInWidth: UITextField!
     @IBOutlet weak var cellsInHeight: UITextField!
@@ -20,9 +22,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     /* Default cells count on collectionView */
     var cellsCount = 1
+
+    var currentCellsWidth = 0
+    var currentMap: WorldMap?
+    var currentPath: Path?
+    var startCellRowCoord: Int?
+    var currentStartCell: Point?
+
     /* Available algorithms */
     var pickOption = ["Wave", "Dijkstra"]
-    
+
     var presenter = MainPresenter()
 
     override func viewDidLoad() {
@@ -39,12 +48,11 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         collectionView.backgroundColor = UIColor.darkGray
         collectionView.layer.borderColor = UIColor.darkGray.cgColor
         collectionView.layer.borderWidth = 1.0
-        
-        cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
+        collectionView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -84,38 +92,72 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return cellsCount
     }
- 
+
     /* Show collectionView borders */
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "basicCell", for: indexPath) as UICollectionViewCell
-        cell.backgroundColor = UIColor.white
-        return cell
+        let selectedCell = collectionView.dequeueReusableCell(withReuseIdentifier: "basicCell", for: indexPath) as UICollectionViewCell
+
+        // check cell in the map
+        let cellCoords = fromIndexToCoords(index: indexPath.row, width: (Int(self.collectionView.frame.width) / currentCellsWidth))
+        if let mapCell = currentMap?.getCell(x: Int32(cellCoords.x), y: Int32(cellCoords.y)) {
+            var color = UIColor.white
+
+            switch(mapCell.cellType) {
+            case CellType.open:
+                color = UIColor.white
+                break
+            case CellType.block:
+                color = UIColor.darkGray
+                break
+            default:
+                color = UIColor.white
+                break
+            }
+            selectedCell.backgroundColor = color
+        }
+
+        // check cell in the path
+        if let path = currentPath {
+            let it = path.iterator()
+            var counter = 0
+
+            while it.hasNext() {
+                let mapCell: MapCell = it.next() as! MapCell
+                if cellCoords.x == mapCell.x && cellCoords.y == mapCell.y {
+                    let color = UIColor.cyan
+                    selectedCell.backgroundColor = color
+                }
+                //if counter == path.size() - 1 {
+                // then it is the finish cell
+                //selectedCell.backgroundColor = UIColor.purple
+                //}
+                counter += 1
+            }
+        }
+
+        if let startCell = currentStartCell {
+            if cellCoords.x == startCell.x && cellCoords.y == startCell.y {
+                selectedCell.backgroundColor = UIColor.green
+            }
+        }
+
+        return selectedCell
     }
-    
-    /* Change cell color after pressing first time */
+
+    /* Save and setup cell coordinates */
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("first: \(indexPath.section) second: \(indexPath.row)")
-        let point: KotlinPair = KotlinPair(first: indexPath.section, second: indexPath.row)
+        var convertedPoint = (x: 0, y: 0)
+        convertedPoint = fromIndexToCoords(index: indexPath.row, width: (Int(self.collectionView.frame.width) / currentCellsWidth)  )
+        let point: KotlinPair = KotlinPair(first: convertedPoint.x, second: convertedPoint.y)
         presenter.onCellClick(point: point)
-        //let cell = collectionView.cellForItem(at: indexPath)
-        //cell?.backgroundColor = UIColor.green
+        startCellRowCoord = indexPath.row
     }
-    
-    /* Change cell color after pressing second time */
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        //let cell = collectionView.cellForItem(at: indexPath)
-        //cell?.backgroundColor = UIColor.white
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "basicCell", for: indexPath) as UICollectionViewCell
+        cell.isHidden = false
     }
-    
-    /* Handle button press */
-    
-    @IBAction func generateButton(_ sender: UIButton) {
-        /* Do nothing for a while */
-        //cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
-        //self.collectionView.reloadData()
-    }
-    
-    
+
     /* Logic */
     
     func getInputMapWidth() -> Int32 {
@@ -129,7 +171,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func getSelectedAlgorithm() -> RoutingAlgorithm {
         var algorithm = RoutingAlgorithm.wave
         for item in pickOption {
-            // TODO: missed Dijkstra algorithm
             switch (item) {
             case "Wave":
                 algorithm = RoutingAlgorithm.wave
@@ -165,13 +206,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
          * This data has been stored in pickOption
          */
 
-         // тут надо динамически заполнять pickOption и обновлять пикер 
+        // тут надо динамически заполнять pickOption и обновлять пикер
     }
     
     func enableGenerateAction() {
         actionButton.isEnabled = true
         actionButton.setTitle("Generate", for: .normal)
-        actionButton.addTarget(self, action: Selector(("onGenerateButtonAction:")), for: UIControl.Event.touchUpInside)
+        actionButton.addTarget(self, action: #selector(onGenerateButtonAction), for: .touchUpInside)
     }
 
     func disableGenerateAction() {
@@ -179,14 +220,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         actionButton.removeTarget(nil, action: nil, for: .allEvents)
     }
 
-    func onGenerateButtonAction(sender: UIButton!) {
+    @objc func onGenerateButtonAction(sender: UIButton!) {
+        cellsCount = (Int(cellsInWidth.text!)! * Int(cellsInHeight.text!)!)
+        collectionView.reloadData()
         presenter.onGenerateAction()
     }
     
     func enableClearAction() {
         actionButton.isEnabled = true
         actionButton.setTitle("Clear", for: .normal)
-        actionButton.addTarget(self, action: Selector(("onClearButtonAction:")), for: UIControl.Event.touchUpInside)
+        actionButton.addTarget(self, action: #selector(onClearButtonAction), for: .touchUpInside)
     }
     
     func disableClearAction() {
@@ -194,19 +237,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         actionButton.removeTarget(nil, action: nil, for: .allEvents)
     }
 
-    func onClearButtonAction(sender: UIButton!) {
+    @objc func onClearButtonAction(sender: UIButton!) {
         presenter.onClearAction()
+        collectionView.reloadData()
     }
     
     func setStartCell(point: KotlinPair) {
-        // тут надо поменять цвет для ячейки, которая находится по индексам point
-        // правильно ли использованы координаты или поменять местами first и second?
-        let indexPath = IndexPath(item: point.second as! Int, section: point.first as! Int)
-        if let cell = self.collectionView.cellForItem(at: indexPath) {
-            let color = UIColor.green
-            // поменять цвет ячейки collectionView
-            cell.backgroundColor = color
-        } 
+        currentStartCell = Point.init()
+        currentStartCell?.x = point.first as! Int
+        currentStartCell?.y = point.second as! Int
+        self.collectionView.reloadData()
     }
     
     func showProgress() {
@@ -226,75 +266,60 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     func drawMap(map: WorldMap) {
-        // 1) применить к collectionView новые размеры карты (количество ячеек): map.width и map.height
-        // 2) отрисовать карту (или она сама отрисуется?)
-        // обход карты для покраски ячеек можно сделать через итератор:
-        let it = map.iterator()
-        while it.hasNext() {
-            let mapCell: MapCell = it.next() as! MapCell
-            // 1) получить цвет ячейки исходя из типа mapCell.cellType (enum с константами: OPEN и BLOCK)
-            // Если OPEN - то цвет белый/светлый, если BLOCK - то цвет темный/серый
-            let color = UIColor.white
-            // 2) применить цвет к ячейке по координатам mapCell.x и mapCell.y
-            // правильно ли использованы координаты или поменять местами x и y?
-            let indexPath = IndexPath(item: Int(mapCell.y), section: Int(mapCell.x))
-            if let cell = self.collectionView.cellForItem(at: indexPath) {
-                cell.backgroundColor = color
-            }
-        }
+        currentMap = map
+        self.collectionView.reloadData()
     }
     
     func drawPath(path: Path) {
-        //let pathLen = path.size()
-        
-        // обход пути с помощью for
-        // если не сработает, то можно через итератор: path.iterator()
-        /*
-        let it = path.iterator()
-        while it.hasNext() {
-            let mapCell = it.next()
-        }
-        */
-        let it = path.iterator()
-        
-        while it.hasNext() {
-            let mapCell: MapCell = it.next() as! MapCell
-            let indexPath = IndexPath(item: Int(mapCell.y), section: Int(mapCell.x))
-            if let cell = self.collectionView.cellForItem(at: indexPath) {
-                // 1) если ячейка первая (индекс == 0), то получить цвет стартовой ячейки
-                // 2) если ячейка последняя (индекс == pathLen - 1), то получить цвет финальной ячейки
-                // 3) иначе получить дефолтный цвет ячейки пути
-                let color = UIColor.white
-                
-                // поменять цвет ячейки collectionView
-                cell.backgroundColor = color
-            }
-        }
-        
+        currentPath = path
+        self.collectionView.reloadData()
     }
     
     func clearMap() {
+        currentPath = nil
+        currentMap = nil
+        currentStartCell = nil
         self.collectionView.reloadData()
     }
     
     func showError(text: String) {
-        /* TODO: Implement later */
+        print("[App Error] " + text)
+    }
+
+    fileprivate func fromIndexToCoords(index: Int, width: Int) -> (x: Int, y: Int) {
+        var x: Int = 0
+        var y: Int = 0
+        x = index % width
+        y = index / width
+        return (x, y)
     }
 
     fileprivate func fromCoordsToIndex(x: Int, y: Int, width: Int) -> Int {
         return x + width * y
-    } 
+    }
 }
 
 extension ViewController: UICollectionViewDelegateFlowLayout {
     /* Adaptive cell size to screen size */
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let cellCurrentWidth = (self.collectionView.frame.width / CGFloat(truncating: NumberFormatter().number(from: cellsInWidth.text!)!))
-        let cellCurrentHeight = (self.collectionView.frame.height / CGFloat(truncating: NumberFormatter().number(from: cellsInHeight.text!)!))
+        let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
+        let cellCurrentWidth = (self.collectionView.frame.width / CGFloat(truncating: NumberFormatter().number(from: cellsInWidth.text!)!) - 1)
+        let cellCurrentHeight = (self.collectionView.frame.height / CGFloat(truncating: NumberFormatter().number(from: cellsInHeight.text!)!) - layout!.minimumLineSpacing)
+        currentCellsWidth = Int(cellCurrentWidth)
         if cellCurrentWidth == 0 || cellCurrentHeight == 0 {
             return CGSize(width: 50.0, height: 50.0)
         }
+        /*
+         * ширина = число ячеек * (ширина ячейки + ширина пробела)
+         * ширина = число ячеек * ширина ячейки +  число ячеек * ширина пробела
+         * ширина / число ячеек = ширина ячейки + ширина пробела
+         * ширина ячейки = ширина / число ячеек - ширина пробела
+         */
         return CGSize(width: cellCurrentWidth, height: cellCurrentWidth)
     }
+}
+
+class Point {
+    var x = 0
+    var y = 0
 }
