@@ -1,10 +1,8 @@
 # PathFinderMP
 
-Experimental multiplatform project using Kotlin Multiplatform.
+Simple experimental multiplatform project using Kotlin Multiplatform.
 
-The application implements algorithms for path finding in a two-dimensional map (maze).
-
-![PathFinderMP androidApp](docs/screenshot_1.png)
+The application implements algorithms for shortest path finding in a two-dimensional map (maze).
 
 ### Project modules
 
@@ -12,11 +10,12 @@ The project consists of the following submodules:
 
 ##### pathfinderlib
 
-Common module that contains multiplatform (common, ios, jvm) implementations of the core application logic. 
+Common module that contains multiplatform (common, ios, jvm) implementations of the core application logic and presentation layer for the single screen.
 
 The following pathfinding algorithms are currently implemented:
 
 - Lee algorithm (Wave algorithm)
+- Dijkstra's algorithm
 
 ##### Platform submodules
 
@@ -28,7 +27,18 @@ The application is implemented for the following platforms:
 
 - **iosApp** - iOS implementation of the application. Uses the ios implementation of **pathfinderlib** submodule.
 
+### Screenshots
+
+Screenshot for android app:
+
+![PathFinderMP androidApp](docs/screenshot_1.png)
+
+Screenshot for iOS app:
+
+![PathFinderMP androidApp](docs/screenshot_2.png)
+
 ### Contributors
 
 * [tgrid0](https://github.com/tgrid0)
+* [AppoNut](https://github.com/AppoNut/)
 * [tetraquark](https://github.com/Tetraquark)
