@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun showHintForState(state: MainContract.AppState) {
-        when(state) {
+        when (state) {
             MainContract.AppState.GENERATE_MAP -> {
                 text_hint.text = getString(R.string.hint_generate_map)
             }
@@ -101,8 +101,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun setStartCell(point: Pair<Int, Int>) {
         startCell = point
-        changeCellColor(gridViews[point.first + map_table.columnCount * point.second],
-            getColorForCellType(CellType.OPEN, isStart = true, isFinis = false, isPath = false))
+        changeCellColor(
+            gridViews[point.first + map_table.columnCount * point.second],
+            getColorForCellType(CellType.OPEN, isStart = true, isFinis = false, isPath = false, isVisited = false)
+        )
     }
 
     override fun getInputMapWidth(): Int =
@@ -134,6 +136,16 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun drawVisitedCell(point: Pair<Int, Int>) {
+        val color = getColorForCellType(CellType.OPEN, false, false, false, true)
+        changeCellColor(gridViews[point.first + map_table.columnCount * point.second], color)
+    }
+
+    override fun drawFinishCell(point: Pair<Int, Int>) {
+        val color = getColorForCellType(CellType.OPEN, false, true, false, false)
+        changeCellColor(gridViews[point.first + map_table.columnCount * point.second], color)
+    }
+
     override fun drawMap(map: WorldMap) {
         map_table.columnCount = map.width
         map_table.rowCount = map.height
@@ -144,7 +156,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             }
 
         map.forEach { mapCell ->
-            val cell = createCell(mapCell.cellType, isStart = false, isFinis = false, isPath = false)
+            val cell = createCell(mapCell.cellType, isStart = false, isFinis = false, isPath = false, isVisited = false)
             cell.layoutParams = cellLayoutParams
             cell.setOnClickListener {
                 presenter.onCellClick(Pair(mapCell.x, mapCell.y))
@@ -157,12 +169,12 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun drawPath(path: Path) {
         val pathLen = path.count()
         path.forEachIndexed { index, mapCell ->
-            val color = if(index == 0) {
-                getColorForCellType(CellType.OPEN, isStart = true, isFinis = false, isPath = false)
+            val color = if (index == 0) {
+                getColorForCellType(CellType.OPEN, isStart = true, isFinis = false, isPath = false, isVisited = false)
             } else if (index == pathLen - 1) {
-                getColorForCellType(CellType.OPEN, isStart = false, isFinis = true, isPath = false)
+                getColorForCellType(CellType.OPEN, isStart = false, isFinis = true, isPath = false, isVisited = false)
             } else {
-                getColorForCellType(CellType.OPEN, isStart = false, isFinis = false, isPath = true)
+                getColorForCellType(CellType.OPEN, isStart = false, isFinis = false, isPath = true, isVisited = false)
             }
             changeCellColor(gridViews[mapCell.x + map_table.columnCount * mapCell.y], color)
         }
@@ -177,8 +189,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
-    private fun createCell(cellType: CellType, isStart: Boolean, isFinis: Boolean, isPath: Boolean): View {
-        val color = getColorForCellType(cellType, isStart, isFinis, isPath)
+    private fun createCell(cellType: CellType, isStart: Boolean, isFinis: Boolean, isPath: Boolean, isVisited: Boolean): View {
+        val color = getColorForCellType(cellType, isStart, isFinis, isPath, isVisited)
 
         val shape = ContextCompat.getDrawable(this, R.drawable.cell_shape) as GradientDrawable
         shape.setColor(color)
@@ -188,12 +200,19 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         }
     }
 
-    private fun getColorForCellType(cellType: CellType, isStart: Boolean, isFinis: Boolean, isPath: Boolean): Int =
+    private fun getColorForCellType(
+        cellType: CellType,
+        isStart: Boolean,
+        isFinis: Boolean,
+        isPath: Boolean,
+        isVisited: Boolean
+    ): Int =
         when (cellType) {
             CellType.OPEN -> when {
                 isStart -> ContextCompat.getColor(this, R.color.cell_start)
                 isFinis -> ContextCompat.getColor(this, R.color.cell_finish)
                 isPath -> ContextCompat.getColor(this, R.color.cell_path)
+                isVisited -> ContextCompat.getColor(this, R.color.cell_visited)
                 else -> ContextCompat.getColor(this, R.color.cell_open)
             }
             CellType.BLOCK -> ContextCompat.getColor(this, R.color.cell_block)

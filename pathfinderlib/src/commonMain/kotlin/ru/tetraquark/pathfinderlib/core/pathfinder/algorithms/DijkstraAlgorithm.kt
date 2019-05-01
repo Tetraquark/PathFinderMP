@@ -6,10 +6,28 @@ import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
 class DijkstraAlgorithm : PathFinderAlgorithm {
 
-    override fun findPath(
+    override suspend fun findPath(
         graph: Graph<*>,
         startNode: Node<*>,
         finishNode: Node<*>
+    ): List<Node<*>> {
+        return dijkstra(graph, startNode, finishNode)
+    }
+
+    override suspend fun findPathIncrementally(
+        graph: Graph<*>,
+        startNode: Node<*>,
+        finishNode: Node<*>,
+        callback: PathFinderAlgorithm.ResultsCallback
+    ) {
+        dijkstra(graph, startNode, finishNode, callback)
+    }
+
+    private suspend fun dijkstra(
+        graph: Graph<*>,
+        startNode: Node<*>,
+        finishNode: Node<*>,
+        callback: PathFinderAlgorithm.ResultsCallback? = null
     ): List<Node<*>> {
         val notVisitedSet = graph.getNodes().values.toMutableSet()
         val distances = mutableMapOf<Node<*>, DijkstraNode>()
@@ -27,7 +45,10 @@ class DijkstraAlgorithm : PathFinderAlgorithm {
                 }
             }
 
-            val _node = node ?: return emptyList()
+            val _node = node ?: return emptyList<Node<*>>().apply {
+                callback?.onPathFound(this)
+            }
+
             if (_node == finishNode)
                 break
 
@@ -35,6 +56,7 @@ class DijkstraAlgorithm : PathFinderAlgorithm {
                 val edgeCost = distances[_node]?.cost!! + edge.weight
                 if (!distances.containsKey(edge.to) || distances[edge.to]?.cost!! > edgeCost) {
                     distances[edge.to] = DijkstraNode(_node, edgeCost)
+                    callback?.onNodeHandled(_node)
                 }
             }
             notVisitedSet.remove(_node)
@@ -46,6 +68,9 @@ class DijkstraAlgorithm : PathFinderAlgorithm {
             pathList.add(endNode)
             endNode = distances[endNode]?.prev
         }
+
+        callback?.onPathFound(pathList)
+
         return pathList.reversed()
     }
 

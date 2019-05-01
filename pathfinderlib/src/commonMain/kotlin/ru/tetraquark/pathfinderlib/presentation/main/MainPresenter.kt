@@ -1,19 +1,27 @@
 package ru.tetraquark.pathfinderlib.presentation.main
 
+import kotlinx.coroutines.*
 import ru.tetraquark.pathfinderlib.core.graph.UniqueIdFactory
 import ru.tetraquark.pathfinderlib.core.graph.impl.SimpleGraph
 import ru.tetraquark.pathfinderlib.core.map.CellType
+import ru.tetraquark.pathfinderlib.core.map.Path
 import ru.tetraquark.pathfinderlib.core.map.WorldMap
 import ru.tetraquark.pathfinderlib.core.map.impl.CellMapGenerator
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.DijkstraAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
+import kotlin.coroutines.CoroutineContext
 
-class MainPresenter : MainContract.Presenter {
+class MainPresenter : MainContract.Presenter, CoroutineScope {
     companion object {
         const val MAX_MAP_WIDTH = 100
         const val MAX_MAP_HEIGHT = 100
     }
+
+    private val coroutineJob = Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + coroutineJob
+
     private var view: MainContract.View? = null
 
     private var currentMap: WorldMap? = null
@@ -30,6 +38,7 @@ class MainPresenter : MainContract.Presenter {
 
     override fun detachView() {
         this.view = null
+        coroutineJob.cancelChildren()
     }
 
     override fun onGenerateAction() {
@@ -80,6 +89,7 @@ class MainPresenter : MainContract.Presenter {
                     it.disableGenerateAction()
                 }
             } else if (appState == MainContract.AppState.SELECT_FINISH) {
+                view?.drawFinishCell(point)
                 changeAppState(MainContract.AppState.FIND_ROUTE_PROGRESS)
                 view?.showProgress()
                 finishCellSelected(point)
@@ -99,6 +109,27 @@ class MainPresenter : MainContract.Presenter {
         val algorithm = view?.getSelectedAlgorithm()
 
         if (startCell != null && algorithm != null) {
+            view?.hideProgress()
+            launch(Dispatchers.Default) {
+                currentMap.findPathIncrementally(startCell, point, createAlgorithm(algorithm), object : WorldMap.ResultsCallback {
+                    override suspend fun onPointHandled(point: Pair<Int, Int>) {
+                        launch(Dispatchers.Main) {
+                            view?.drawVisitedCell(point)
+                        }
+                        delay(100)
+                    }
+
+                    override suspend fun onPathFound(path: Path) {
+                        launch(Dispatchers.Main) {
+                            view?.drawPath(path)
+                            view?.enableClearAction()
+                        }
+                    }
+
+                })
+            }
+
+            /*
             val path = currentMap.findPath(startCell, point, createAlgorithm(algorithm))
 
             changeAppState(MainContract.AppState.SHOWING_RESULTS)
@@ -107,6 +138,7 @@ class MainPresenter : MainContract.Presenter {
                 it.drawPath(path)
                 it.enableClearAction()
             }
+            */
         }
     }
 

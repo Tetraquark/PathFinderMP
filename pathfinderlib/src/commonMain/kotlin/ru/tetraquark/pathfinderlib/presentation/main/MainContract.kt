@@ -23,6 +23,8 @@ interface MainContract {
         fun showIterationsCount(iterations: Int)
         fun drawMap(map: WorldMap)
         fun drawPath(path: Path)
+        fun drawVisitedCell(point: Pair<Int, Int>)
+        fun drawFinishCell(point: Pair<Int, Int>)
         fun clearMap()
 
         fun showError(text: String)

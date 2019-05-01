@@ -1,5 +1,7 @@
 package ru.tetraquark.pathfindermp.cli
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.tetraquark.pathfinderlib.core.TestHello
 import ru.tetraquark.pathfinderlib.core.graph.UniqueIdFactory
 import ru.tetraquark.pathfinderlib.core.graph.impl.SimpleGraph
@@ -120,8 +122,11 @@ class CliApp {
         println("3: find path from 4 to 7")
         from = g.getNode(4)
         to = g.getNode(7)
+
         if(from != null && to != null)
-            println("path ${alg.findPath(g, from, to)}")
+            GlobalScope.launch {
+                println("path ${alg.findPath(g, from, to)}")
+            }
     }
 
     fun drawMap(worldMap: WorldMap) {
@@ -202,9 +207,11 @@ class CliApp {
     fun tests_3() {
         val alg = WaveAlgorithm()
         println("3: find path from [0,0] to [6,5]")
-        val path = testWorldMap.findPath(Pair(0, 0), Pair(6, 5), alg)
-        println("path $path")
-        drawMap(testWorldMap, path)
+        GlobalScope.launch {
+            val path = testWorldMap.findPath(Pair(0, 0), Pair(6, 5), alg)
+            println("path $path")
+            drawMap(testWorldMap, path)
+        }
     }
 
 }

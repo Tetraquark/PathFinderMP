@@ -6,7 +6,29 @@ import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
 class WaveAlgorithm : PathFinderAlgorithm {
 
-    override fun findPath(graph: Graph<*>, startNode: Node<*>, finishNode: Node<*>): List<Node<*>> {
+    override suspend fun findPath(
+        graph: Graph<*>,
+        startNode: Node<*>,
+        finishNode: Node<*>
+    ): List<Node<*>> {
+        return waveAlgorithm(graph, startNode, finishNode)
+    }
+
+    override suspend fun findPathIncrementally(
+        graph: Graph<*>,
+        startNode: Node<*>,
+        finishNode: Node<*>,
+        callback: PathFinderAlgorithm.ResultsCallback
+    ) {
+        waveAlgorithm(graph, startNode, finishNode, callback)
+    }
+
+    private suspend fun waveAlgorithm(
+        graph: Graph<*>,
+        startNode: Node<*>,
+        finishNode: Node<*>,
+        callback: PathFinderAlgorithm.ResultsCallback? = null
+    ): List<Node<*>> {
         val path = ArrayList<Node<*>>()
 
         val markT = HashMap<Int, Int>()
@@ -32,6 +54,7 @@ class WaveAlgorithm : PathFinderAlgorithm {
                     if (markT[curNode.id] == -1) {
                         markT[curNode.id] = t + 1
                         newFront.add(curNode)
+                        callback?.onNodeHandled(curNode)
                     }
                 }
             }
@@ -66,6 +89,7 @@ class WaveAlgorithm : PathFinderAlgorithm {
                 }
             }
         }
+        callback?.onPathFound(path)
         return path.reversed()
     }
 
