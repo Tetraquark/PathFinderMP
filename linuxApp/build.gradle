@@ -1,0 +1,22 @@
+apply plugin: 'org.jetbrains.kotlin.platform.native'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://kotlin.bintray.com/kotlinx" }
+    maven { url "http://kotlin.bintray.com/kotlin-eap" }
+}
+
+sourceSets {
+    // Adding target-independent sources.
+    main.kotlin.srcDirs += 'src/main/kotlin'
+}
+
+components.main {
+    targets = ['linux_x64']
+    outputKinds = [EXECUTABLE]
+
+    dependencies {
+        implementation 'ru.tetraquark.pathfinderlib:pathfinderlib-linux:1.0.0'
+    }
+}
