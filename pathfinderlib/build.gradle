@@ -5,6 +5,8 @@ repositories {
 }
 
 kotlin {
+    linuxX64("linux")
+
     targets {
         final def iOSTarget = System.getenv('SDK_NAME')?.startsWith("iphoneos") \
                               ? presets.iosArm64 : presets.iosX64
@@ -14,6 +16,12 @@ kotlin {
         }
 
         fromPreset(presets.jvm, 'jvm')
+        fromPreset(presets.linuxX64, 'linux')
+
+        configure([linux]) {
+            // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
+            compilations.main.outputKinds('DYNAMIC')
+        }
     }
 
     sourceSets {
@@ -33,7 +41,6 @@ kotlin {
             dependencies {
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
             }
-
         }
         iOSTest {
         }
@@ -49,6 +56,13 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
                 implementation 'org.jetbrains.kotlin:kotlin-test-junit'
             }
+        }
+        linuxMain {
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
+            }
+        }
+        linuxTest {
         }
     }
 }
