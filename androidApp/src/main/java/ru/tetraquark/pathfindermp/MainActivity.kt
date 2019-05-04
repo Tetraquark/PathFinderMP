@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun drawPath(path: Path) {
-        val pathLen = path.count()
+        val pathLen = path.size()
         path.forEachIndexed { index, mapCell ->
             val color = if(index == 0) {
                 getColorForCellType(CellType.OPEN, isStart = true, isFinis = false, isPath = false)
