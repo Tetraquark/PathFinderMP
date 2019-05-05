@@ -66,6 +66,7 @@ class MainPresenter : MainContract.Presenter {
             it.clearMap()
             it.disableClearAction()
             it.enableGenerateAction()
+            it.showAvailableRoutingAlgorithms(listOf(RoutingAlgorithm.WAVE, RoutingAlgorithm.DIJKSTRA))
         }
     }
 

@@ -17,17 +17,15 @@ components.main {
     outputKinds = [EXECUTABLE]
 
     target('linux_x64') {
+        entryPoint 'ru.tetraquark.pathfindermp.linuxapp.main'
         linkerOpts '-lncurses'
     }
 
     dependencies {
         implementation 'ru.tetraquark.pathfinderlib:pathfinderlib-linux:1.0.0'
         cinterop('libncurses') {
-            // src/main/c_interop/mystdio.def is used as a def file.
-
             // Set up compiler options
             compilerOpts '-I/usr/include'
         }
-
     }
 }
