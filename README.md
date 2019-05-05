@@ -57,6 +57,10 @@ Screenshot for iOS app:
 
 ![PathFinderMP androidApp](docs/screenshot_ios.png)
 
+Screenshot for Linux app:
+
+![PathFinderMP androidApp](docs/screenshot_linux.png)
+
 ## Contributors
 
 * [tgrid0](https://github.com/tgrid0)
