@@ -17,6 +17,7 @@ import ru.tetraquark.pathfinderlib.core.map.WorldMap
 import ru.tetraquark.pathfinderlib.presentation.main.MainContract
 import ru.tetraquark.pathfinderlib.presentation.main.MainPresenter
 import ru.tetraquark.pathfinderlib.presentation.main.RoutingAlgorithm
+import ru.tetraquark.pathfinderlib.coroutines.AppDispatcher
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         println(TestHello().multiplatformHello())
 
-        presenter = MainPresenter()
+        presenter = MainPresenter(AppDispatcher)
 
         map_table.viewTreeObserver.addOnGlobalLayoutListener {
             gridMapSize = Point(map_table.width, map_table.height)
