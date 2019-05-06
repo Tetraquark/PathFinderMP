@@ -3,3 +3,4 @@ enableFeaturePreview('GRADLE_METADATA')
 include ':pathfinderlib'
 include ':androidApp'
 include ':cliApp'
+include ':linuxApp'

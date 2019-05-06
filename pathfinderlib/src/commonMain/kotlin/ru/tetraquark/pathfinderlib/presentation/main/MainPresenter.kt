@@ -75,6 +75,7 @@ class MainPresenter : MainContract.Presenter, CoroutineScope {
             it.clearMap()
             it.disableClearAction()
             it.enableGenerateAction()
+            it.showAvailableRoutingAlgorithms(listOf(RoutingAlgorithm.WAVE, RoutingAlgorithm.DIJKSTRA))
         }
     }
 

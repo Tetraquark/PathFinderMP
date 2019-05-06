@@ -1,4 +1,8 @@
 apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+group 'ru.tetraquark.pathfinderlib'
+version '1.0.0'
 
 repositories {
     mavenCentral()
