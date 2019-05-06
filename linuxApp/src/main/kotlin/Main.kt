@@ -5,6 +5,7 @@ import libncurses.*
 
 import ru.tetraquark.pathfinderlib.core.TestHello
 import ru.tetraquark.pathfinderlib.presentation.main.MainPresenter
+import ru.tetraquark.pathfinderlib.coroutines.AppDispatcher
 
 fun main() {
     println(TestHello().multiplatformHello())
@@ -28,7 +29,7 @@ fun main() {
     endwin()
     */
 
-    val app = CliApp(MainPresenter())
+    val app = CliApp(MainPresenter(AppDispatcher))
     app.startApp()
     getch()
     app.stopApp()

@@ -32,6 +32,7 @@ internal class CliApp(private val presenter: MainPresenter) : MainContract.View 
     private var startCellColorId = CellType.values().size + 3
     private var finishCellColorId = CellType.values().size + 4
     private var pathCellColorId = CellType.values().size + 5
+    private var visitedCellColorId = CellType.values().size + 6
 
     fun startApp() {
         enableWin()
@@ -218,6 +219,18 @@ internal class CliApp(private val presenter: MainPresenter) : MainContract.View 
         presenter.onClearAction()
     }
 
+    override fun drawVisitedCell(point: Pair<Int, Int>) {
+        withColor(visitedCellColorId) {
+            drawStr(point.first * 2 + WIDTH_OFFSET + 2, point.second + HEIGHT_OFFSET + 2, "..")
+        }
+    }
+
+    override fun drawFinishCell(point: Pair<Int, Int>) {
+        withColor(finishCellColorId) {
+            drawStr(point.first * 2 + WIDTH_OFFSET + 2, point.second + HEIGHT_OFFSET + 2, " @")
+        }
+    }
+
     override fun clearMap() {
         clearWin()
         refreshWin()
@@ -240,6 +253,7 @@ internal class CliApp(private val presenter: MainPresenter) : MainContract.View 
         init_pair(startCellColorId.toShort(), COLOR_GREEN, COLOR_BLACK)
         init_pair(finishCellColorId.toShort(), COLOR_YELLOW, COLOR_BLACK)
         init_pair(pathCellColorId.toShort(), COLOR_BLUE, COLOR_BLACK)
+        init_pair(visitedCellColorId.toShort(), COLOR_RED, COLOR_BLACK)
     }
 
     private fun printEnableAlgorithms() {

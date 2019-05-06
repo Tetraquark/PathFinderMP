@@ -12,7 +12,7 @@ import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.DijkstraAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
 import kotlin.coroutines.CoroutineContext
 
-class MainPresenter : MainContract.Presenter, CoroutineScope {
+class MainPresenter(private val coroutineCtx: CoroutineContext) : MainContract.Presenter, CoroutineScope {
     companion object {
         const val MAX_MAP_WIDTH = 100
         const val MAX_MAP_HEIGHT = 100
@@ -20,7 +20,7 @@ class MainPresenter : MainContract.Presenter, CoroutineScope {
 
     private val coroutineJob = Job()
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + coroutineJob
+        get() = coroutineCtx + coroutineJob
 
     private var view: MainContract.View? = null
 
@@ -111,17 +111,17 @@ class MainPresenter : MainContract.Presenter, CoroutineScope {
 
         if (startCell != null && algorithm != null) {
             view?.hideProgress()
-            launch(Dispatchers.Default) {
+            launch {
                 currentMap.findPathIncrementally(startCell, point, createAlgorithm(algorithm), object : WorldMap.ResultsCallback {
                     override suspend fun onPointHandled(point: Pair<Int, Int>) {
-                        launch(Dispatchers.Main) {
+                        launch {
                             view?.drawVisitedCell(point)
                         }
                         delay(100)
                     }
 
                     override suspend fun onPathFound(path: Path) {
-                        launch(Dispatchers.Main) {
+                        launch {
                             view?.drawPath(path)
                             view?.enableClearAction()
                         }
