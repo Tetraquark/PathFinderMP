@@ -10,9 +10,10 @@ import ru.tetraquark.pathfinderlib.core.map.impl.CellMapGenerator
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.DijkstraAlgorithm
 import ru.tetraquark.pathfinderlib.core.pathfinder.algorithms.WaveAlgorithm
+import ru.tetraquark.pathfinderlib.coroutines.AppDispatcher
 import kotlin.coroutines.CoroutineContext
 
-class MainPresenter(private val coroutineCtx: CoroutineContext) : MainContract.Presenter, CoroutineScope {
+class MainPresenter : MainContract.Presenter, CoroutineScope {
     companion object {
         const val MAX_MAP_WIDTH = 100
         const val MAX_MAP_HEIGHT = 100
@@ -20,7 +21,7 @@ class MainPresenter(private val coroutineCtx: CoroutineContext) : MainContract.P
 
     private val coroutineJob = Job()
     override val coroutineContext: CoroutineContext
-        get() = coroutineCtx + coroutineJob
+        get() = AppDispatcher + coroutineJob
 
     private var view: MainContract.View? = null
 
@@ -117,7 +118,7 @@ class MainPresenter(private val coroutineCtx: CoroutineContext) : MainContract.P
                         launch {
                             view?.drawVisitedCell(point)
                         }
-                        delay(100)
+                        //delay(100)
                     }
 
                     override suspend fun onPathFound(path: Path) {
