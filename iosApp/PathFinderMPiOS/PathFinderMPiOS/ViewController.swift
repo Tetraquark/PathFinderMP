@@ -28,6 +28,7 @@ UICollectionViewDataSource, MainContractView  {
     var currentPath: Path?
     var startCellRowCoord: Int?
     var currentStartCell: Point?
+    var visitedCells: Dictionary<Int, Point>?
 
     /* Available algorithms */
     var pickOption = ["Wave", "Dijkstra"]
@@ -115,7 +116,9 @@ UICollectionViewDataSource, MainContractView  {
             }
             selectedCell.backgroundColor = color
         }
-
+        if visitedCells?[indexPath.row] != nil {
+            selectedCell.backgroundColor = UIColor.yellow
+        }
         // check cell in the path
         if let path = currentPath {
             let it = path.iterator()
@@ -159,6 +162,23 @@ UICollectionViewDataSource, MainContractView  {
     }
 
     /* Logic */
+
+    func drawVisitedCell(point: KotlinPair) {
+        var convertedIndex = fromCoordsToIndex(x: point.first as! Int,
+                                               y: point.second as! Int,
+                                               width: (Int(self.collectionView.frame.width) / currentCellsWidth))
+        var convertedPoint: Point = Point.init()
+        convertedPoint.x = point.first as! Int
+        convertedPoint.y = point.second as! Int
+        if visitedCells != nil {
+            visitedCells![convertedIndex] = convertedPoint
+        }
+        collectionView.reloadData()
+    }
+
+    func drawFinishCell(point: KotlinPair) {
+        /* do nothing here */
+    }
     
     func getInputMapWidth() -> Int32 {
         return Int32(cellsInWidth.text!) ?? 0
@@ -266,6 +286,7 @@ UICollectionViewDataSource, MainContractView  {
     }
     
     func drawMap(map: WorldMap) {
+        visitedCells = Dictionary<Int, Point>.init()
         currentMap = map
         self.collectionView.reloadData()
     }
@@ -279,6 +300,7 @@ UICollectionViewDataSource, MainContractView  {
         currentPath = nil
         currentMap = nil
         currentStartCell = nil
+        visitedCells = nil
         self.collectionView.reloadData()
     }
     
