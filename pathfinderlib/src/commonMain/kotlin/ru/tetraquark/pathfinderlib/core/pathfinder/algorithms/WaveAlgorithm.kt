@@ -89,7 +89,7 @@ class WaveAlgorithm : PathFinderAlgorithm {
                 }
             }
         }
-        callback?.onPathFound(path)
+        callback?.onPathFound(path.reversed())
         return path.reversed()
     }
 

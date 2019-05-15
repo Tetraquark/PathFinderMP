@@ -69,7 +69,7 @@ class DijkstraAlgorithm : PathFinderAlgorithm {
             endNode = distances[endNode]?.prev
         }
 
-        callback?.onPathFound(pathList)
+        callback?.onPathFound(pathList.reversed())
 
         return pathList.reversed()
     }
