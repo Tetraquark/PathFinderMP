@@ -196,17 +196,20 @@ internal class CliApp(private val presenter: MainPresenter) : MainContract.View 
     override fun drawPath(path: Path) {
         val pathLen = path.size()
         path.forEachIndexed { index, cell ->
-            if (index == pathLen - 1) {
-                withColor(finishCellColorId) {
-                    drawStr(cell.x * 2 + WIDTH_OFFSET + 2, cell.y + HEIGHT_OFFSET + 2, " @")
-                }
-                // finish cell
+            withColor(pathCellColorId) {
+                drawStr(cell.x * 2 + WIDTH_OFFSET + 2, cell.y + HEIGHT_OFFSET + 2, " o")
+            }
+        }
 
-            } else if (index != 0) {
-                // not start cell
-                withColor(pathCellColorId) {
-                    drawStr(cell.x * 2 + WIDTH_OFFSET + 2, cell.y + HEIGHT_OFFSET + 2, " o")
-                }
+        path.getStartCell()?.let {
+            withColor(startCellColorId) {
+                drawStr(it.x * 2 + WIDTH_OFFSET + 2, it.y + HEIGHT_OFFSET + 2, " ©")
+            }
+        }
+
+        path.getFinishCell()?.let {
+            withColor(finishCellColorId) {
+                drawStr(it.x * 2 + WIDTH_OFFSET + 2, it.y + HEIGHT_OFFSET + 2, " @")
             }
         }
 
