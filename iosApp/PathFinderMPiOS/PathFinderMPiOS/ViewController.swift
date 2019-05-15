@@ -28,6 +28,7 @@ UICollectionViewDataSource, MainContractView  {
     var currentPath: Path?
     var startCellRowCoord: Int?
     var currentStartCell: Point?
+    var currentFinishCell: Point?
     var visitedCells: Dictionary<Int, Point>?
 
     /* Available algorithms */
@@ -144,6 +145,12 @@ UICollectionViewDataSource, MainContractView  {
             }
         }
 
+        if let finishCell = currentFinishCell {
+            if cellCoords.x == finishCell.x && cellCoords.y == finishCell.y {
+                selectedCell.backgroundColor = UIColor.red
+            }
+        }
+
         return selectedCell
     }
 
@@ -177,7 +184,9 @@ UICollectionViewDataSource, MainContractView  {
     }
 
     func drawFinishCell(point: KotlinPair) {
-        /* do nothing here */
+        currentFinishCell = Point.init()
+        currentFinishCell?.x = point.first as! Int
+        currentFinishCell?.y = point.second as! Int
     }
     
     func getInputMapWidth() -> Int32 {
@@ -300,6 +309,7 @@ UICollectionViewDataSource, MainContractView  {
         currentPath = nil
         currentMap = nil
         currentStartCell = nil
+        currentFinishCell = nil
         visitedCells = nil
         self.collectionView.reloadData()
     }
