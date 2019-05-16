@@ -10,7 +10,7 @@ The project consists of the following submodules:
 
 ### pathfinderlib
 
-Common module that contains multiplatform (common, ios, jvm) implementations of the core application logic and presentation layer for the single screen.
+Common module that contains multiplatform (common, ios, jvm, linux) implementations of the core application logic and presentation layer for the single screen.
 
 The following pathfinding algorithms are currently implemented:
 
@@ -29,37 +29,64 @@ The application is implemented for the following platforms:
 
 - **cliApp** - JVM implementation of the application (for debugging and testing purposes). Uses the jvm implementation of **pathfinderlib** submodule. Console is used for output.
 
-### How to build specific submodule
+## How to build specific submodule
+
+First of all, you need to build the common module and publish it in maven local repo (for **linuxApp** submodule):
+
+```
+./gradlew pathfinderlib:build
+./gradlew pathfinderlib:publishToMavenLocal
+```
+
+Then you can build an app for a specific platform.
 
 ##### linuxApp
 
-1) Build common **pathfinderlib** module using gradle task `build`.
-2) Publish to Maven Local using gradle task `publishToMavenLocal`.
-3) Build **linuxApp** module using gradle task `build`.
-4) Run `linuxApp/build/exe/main/release/linuxApp.kexe`
+Install **ncurses**:
 
-##### androidApp
+```
+apt-get install libncurses5-dev
+```
 
-Just run `androidApp` task in Android Studio: 
-**Run -> Run -> androidApp**
+Build the app using gradlew:
+
+```
+./gradlew linuxapp:build
+```
+
+And then just run the executable:
+
+```
+./linuxApp/build/exe/main/release/linuxApp.kexe
+```
 
 ##### iosApp
 
-Later
+Open **iosApp** project in Xcode and follow the instructions [here](https://kotlinlang.org/docs/tutorials/native/mpp-ios-android.html#setting-up-xcode).
+
+##### androidApp
+
+Using gradlew:
+
+```
+./gradlew androidapp:build
+```
+
+Or you can use the Android Studio build tool. 
 
 ## Screenshots
 
-Screenshot for android app:
+Android:
 
-![PathFinderMP androidApp](docs/screenshot_android.png)
+![](docs/gif/androidapp.gif)
 
-Screenshot for iOS app:
+iOS:
 
-![PathFinderMP androidApp](docs/screenshot_ios.png)
+![](docs/gif/iosapp.gif)
 
-Screenshot for Linux app:
+Linux:
 
-![PathFinderMP androidApp](docs/screenshot_linux.png)
+![](docs/gif/linuxapp.gif)
 
 ## Contributors
 
