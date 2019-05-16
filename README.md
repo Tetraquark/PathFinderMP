@@ -74,19 +74,23 @@ Using gradlew:
 
 Or you can use the Android Studio build tool. 
 
-## Screenshots
+## Preview
 
-Android:
+##### Android
 
 ![](docs/gif/androidapp.gif)
 
-iOS:
+##### iOS
 
 ![](docs/gif/iosapp.gif)
 
-Linux:
+##### Linux
 
 ![](docs/gif/linuxapp.gif)
+
+## License
+
+All content is licensed under the terms of the MIT open source license.
 
 ## Contributors
 
