@@ -5,19 +5,18 @@ import ru.tetraquark.pathfinderlib.core.graph.Node
 import ru.tetraquark.pathfinderlib.core.map.*
 import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 
-class CellWorldMap(
-    pathGraph: MutableGraph<MapCell>,
-    adapter: MapAdapter<Int>
-) : WorldMap(pathGraph, adapter) {
+class CellWorldMap(pathGraph: MutableGraph<MapCell>, adapter: MapAdapter<Int>) : WorldMap(pathGraph, adapter) {
 
     companion object {
         private const val DEFAULT_EDGES_WEIGHT = 1
     }
 
-    private var cellList: MutableList<MapCell>
+    override val size: Int
+        get() = cellList.size
+
+    private var cellList: MutableList<MapCell> = mutableListOf()
 
     init {
-        cellList = mutableListOf()
         reloadMap()
     }
 
@@ -28,25 +27,25 @@ class CellWorldMap(
         height = adapter.getHeight()
 
         cellList = mutableListOf()
-        for(j in (0 until height)) {
-            for(i in (0 until width)) {
+        for (j in (0 until height)) {
+            for (i in (0 until width)) {
                 val cell = MapCell(i, j, adapter.getCellType(i, j))
                 val nodeId = fromCoordsToKey(i, j, width)
 
-                if(cell.cellType == CellType.OPEN) {
+                if (cell.cellType == CellType.OPEN) {
                     val node = pathGraph.putNode(nodeId, cell)
                     // creates nodes and edges with with adjacent nodes
-                    if(node != null) {
-                        if(i > 0) {
+                    if (node != null) {
+                        if (i > 0) {
                             tryToConnectTwoNodes(node, fromCoordsToKey(i - 1, j, width))
                         }
-                        if(i < width - 1) {
+                        if (i < width - 1) {
                             tryToConnectTwoNodes(node, fromCoordsToKey(i + 1, j, width))
                         }
-                        if(j > 0) {
+                        if (j > 0) {
                             tryToConnectTwoNodes(node, fromCoordsToKey(i, j - 1, width))
                         }
-                        if(j < height - 1) {
+                        if (j < height - 1) {
                             tryToConnectTwoNodes(node, fromCoordsToKey(i, j + 1, width))
                         }
                     }
@@ -58,7 +57,7 @@ class CellWorldMap(
     }
 
     override fun getCell(x: Int, y: Int): MapCell? {
-        if(x < 0 || x >= width || y < 0 || y >= height)
+        if (x < 0 || x >= width || y < 0 || y >= height)
             return null
         return cellList[fromCoordsToKey(x, y, width)]
     }
@@ -71,7 +70,7 @@ class CellWorldMap(
         val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
         val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
 
-        if(startNode != null && finishNode != null) {
+        if (startNode != null && finishNode != null) {
             val pathNodes = algorithm.findPath(pathGraph, startNode, finishNode)
             return getPathFromNodesList(pathNodes)
         }
@@ -88,21 +87,31 @@ class CellWorldMap(
         val startNode = pathGraph.getNode(fromPointsToKey(startPoint, width))
         val finishNode = pathGraph.getNode(fromPointsToKey(finishPoint, width))
 
-        if(startNode != null && finishNode != null) {
-            algorithm.findPathIncrementally(pathGraph, startNode, finishNode, object : PathFinderAlgorithm.ResultsCallback {
-                override suspend fun onNodeHandled(node: Node<*>) {
-                    val cell = node.data as MapCell
-                    callback.onPointHandled(Pair(cell.x, cell.y))
-                }
+        if (startNode != null && finishNode != null) {
+            algorithm.findPathIncrementally(
+                pathGraph,
+                startNode,
+                finishNode,
+                object : PathFinderAlgorithm.ResultsCallback {
+                    override suspend fun onNodeHandled(node: Node<*>) {
+                        val cell = node.data as MapCell
+                        callback.onPointHandled(Pair(cell.x, cell.y))
+                    }
 
-                override suspend fun onPathFound(path: List<Node<*>>) {
-                    callback.onPathFound(getPathFromNodesList(path))
-                }
-            })
+                    override suspend fun onPathFound(path: List<Node<*>>) {
+                        callback.onPathFound(getPathFromNodesList(path))
+                    }
+                })
         }
     }
 
     override fun iterator(): Iterator<MapCell> = cellList.iterator()
+
+    override fun contains(element: MapCell): Boolean = element in cellList
+
+    override fun containsAll(elements: Collection<MapCell>): Boolean = cellList.containsAll(elements)
+
+    override fun isEmpty(): Boolean = cellList.isEmpty()
 
     private fun fromCoordsToKey(x: Int, y: Int, width: Int): Int = x + width * y
 
@@ -119,7 +128,7 @@ class CellWorldMap(
 
     private fun tryToConnectTwoNodes(from: Node<MapCell>, toNodeId: Int) {
         pathGraph.getNode(toNodeId)?.let {
-            if(it.data.cellType != CellType.BLOCK) {
+            if (it.data.cellType != CellType.BLOCK) {
                 addNewEdge(from, it, DEFAULT_EDGES_WEIGHT)
                 addNewEdge(it, from, DEFAULT_EDGES_WEIGHT)
             }
@@ -128,7 +137,7 @@ class CellWorldMap(
 
     private fun tryToConnectTwoNodes(from: Node<MapCell>, to: Node<MapCell>?) {
         to?.let {
-            if(it.data.cellType != CellType.BLOCK) {
+            if (it.data.cellType != CellType.BLOCK) {
                 addNewEdge(from, it, DEFAULT_EDGES_WEIGHT)
             }
         }
@@ -136,7 +145,7 @@ class CellWorldMap(
 
     private fun addNewEdge(from: Node<MapCell>, to: Node<MapCell>, weight: Int) {
         // if there is no such edge yet
-        if(pathGraph.getEdge(from, to) == null) {
+        if (pathGraph.getEdge(from, to) == null) {
             pathGraph.addEdge(from, to, weight)
         }
     }

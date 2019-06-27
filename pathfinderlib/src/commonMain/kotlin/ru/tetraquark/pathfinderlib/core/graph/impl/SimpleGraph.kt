@@ -6,6 +6,7 @@ class SimpleGraph<NodeDataT>(
     private val nodeIdFactory: UniqueIdFactory<Int>?,
     private val edgeIdFactory: UniqueIdFactory<Int>?
 ) : MutableGraph<NodeDataT> {
+
     private val edges = mutableMapOf<Int, Edge<NodeDataT>>()
     private val nodes = mutableMapOf<Int, Node<NodeDataT>>()
 
@@ -30,7 +31,7 @@ class SimpleGraph<NodeDataT>(
     }
 
     override fun putNode(id: Int, data: NodeDataT): Node<NodeDataT>? {
-        return if(nodes.containsKey(id)) {
+        return if (nodes.containsKey(id)) {
             // rewrite data of the existing node
             nodes[id]?.apply {
                 this.data = data
@@ -48,7 +49,7 @@ class SimpleGraph<NodeDataT>(
         to: Node<NodeDataT>,
         weight: Int
     ): Edge<NodeDataT>? {
-        return if(edgeIdFactory != null) {
+        return if (edgeIdFactory != null) {
             val uniqueId = generateUniqueId({
                 edgeIdFactory.getUniqueId()
             }, {
@@ -101,7 +102,7 @@ class SimpleGraph<NodeDataT>(
     }
 
     override fun getEdge(from: Node<NodeDataT>, to: Node<NodeDataT>): Edge<NodeDataT>? {
-        return if(from in this && to in this) {
+        return if (from in this && to in this) {
             // TODO: change firstOrNull predicate for directed graph
             edges.values.firstOrNull { from == it.from && to == it.to }
         } else {
@@ -110,7 +111,7 @@ class SimpleGraph<NodeDataT>(
     }
 
     override fun getEdgesOfNode(node: Node<*>): List<Edge<NodeDataT>> {
-        return if(node in this) {
+        return if (node in this) {
             edges.values.filter { it.from == node }
         } else {
             listOf()
@@ -128,7 +129,8 @@ class SimpleGraph<NodeDataT>(
 
     private inline fun <T> generateUniqueId(
         idGenerator: () -> T,
-        isIdExist: (id: T) -> Boolean): T {
+        isIdExist: (id: T) -> Boolean
+    ): T {
         var uniqueId: T
         do {
             uniqueId = idGenerator()

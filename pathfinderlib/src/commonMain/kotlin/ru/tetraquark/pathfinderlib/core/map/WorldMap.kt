@@ -6,7 +6,7 @@ import ru.tetraquark.pathfinderlib.core.pathfinder.PathFinderAlgorithm
 abstract class WorldMap(
     protected val pathGraph: MutableGraph<MapCell>,
     protected var adapter: MapAdapter<Int>
-) : Iterable<MapCell> {
+) : Collection<MapCell> {
 
     var width = 0
         protected set

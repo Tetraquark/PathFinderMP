@@ -1,7 +1,6 @@
 package ru.tetraquark.pathfinderlib.core.graph
 
-interface MutableGraph<NodeDataT> :
-    Graph<NodeDataT> {
+interface MutableGraph<NodeDataT> : Graph<NodeDataT> {
 
     fun addNode(data: NodeDataT): Node<NodeDataT>?
 

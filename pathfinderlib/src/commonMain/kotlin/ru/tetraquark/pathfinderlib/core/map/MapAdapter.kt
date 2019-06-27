@@ -1,12 +1,12 @@
 package ru.tetraquark.pathfinderlib.core.map
 
-abstract class MapAdapter<PathWeightT> {
+interface MapAdapter<PathWeightT> {
 
-    abstract fun getWidth(): Int
+    fun getWidth(): Int
 
-    abstract fun getHeight(): Int
+    fun getHeight(): Int
 
-    abstract fun getCellType(x: Int, y: Int): CellType
+    fun getCellType(x: Int, y: Int): CellType
 
-    abstract fun getPathWeight(fromX: Int, fromY: Int, toX: Int, toY: Int): PathWeightT
+    fun getPathWeight(fromX: Int, fromY: Int, toX: Int, toY: Int): PathWeightT
 }

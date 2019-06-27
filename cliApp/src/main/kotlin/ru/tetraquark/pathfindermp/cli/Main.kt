@@ -163,7 +163,7 @@ class CliApp {
     }
 
     private fun createMap(): WorldMap {
-        val adapter = object : MapAdapter<Int>() {
+        val adapter = object : MapAdapter<Int> {
             override fun getPathWeight(fromX: Int, fromY: Int, toX: Int, toY: Int): Int = 1
 
             override fun getCellType(x: Int, y: Int): CellType {
